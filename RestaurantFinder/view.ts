@@ -12,6 +12,8 @@ export class RestaurantFinderView {
     private _costMaxLabel: SKLabel | null = null;
     private _ratingMinLabel: SKLabel | null = null;
     private _ratingMaxLabel: SKLabel | null = null;
+    private _typeLabel: SKLabel | null = null;
+    private _featuresLabels: Map<string, SKLabel> = new Map();
 
     constructor() {
         // Create main container
@@ -27,12 +29,12 @@ export class RestaurantFinderView {
     // Create filters panel with placeholder widgets
     private createFiltersPanel(): void {
         // Create filters container positioned below the map
-        // Increased height to accommodate both cost and rating filters
+        // Increased height to accommodate all filters including features
         this._filtersContainer = new SKContainer({
             x: 50,
             y: 470,
             width: 500,
-            height: 160,
+            height: 240,
             fill: "#f0f0f0",
             border: "#cccccc"
         });
@@ -154,12 +156,73 @@ export class RestaurantFinderView {
         this._ratingMaxLabel.fill = "#333333";
         this._filtersContainer.addChild(this._ratingMaxLabel);
 
-        // Placeholder text indicating these will be replaced with sliders
+        // Restaurant Type Filter Section
+        const typeTitle = new SKLabel({
+            text: "Restaurant Type:",
+            x: 10,
+            y: 160,
+            width: 120,
+            height: 20
+        });
+        typeTitle.font = "bold 12px Arial";
+        typeTitle.fill = "#000000";
+        this._filtersContainer.addChild(typeTitle);
+
+        // Type Selection Label (placeholder - will be replaced with radio buttons)
+        this._typeLabel = new SKLabel({
+            text: "All Types",
+            x: 10,
+            y: 185,
+            width: 200,
+            height: 20
+        });
+        this._typeLabel.font = "12px Arial";
+        this._typeLabel.fill = "#333333";
+        this._filtersContainer.addChild(this._typeLabel);
+
+        // Features Filter Section
+        const featuresTitle = new SKLabel({
+            text: "Features:",
+            x: 250,
+            y: 10,
+            width: 100,
+            height: 20
+        });
+        featuresTitle.font = "bold 12px Arial";
+        featuresTitle.fill = "#000000";
+        this._filtersContainer.addChild(featuresTitle);
+
+        // Feature checkboxes (placeholder - will be replaced with actual checkboxes)
+        const features = [
+            "free parking",
+            "pets allowed",
+            "vegetarian options",
+            "gluten free options"
+        ];
+
+        let featureY = 35;
+        features.forEach((feature) => {
+            // Feature label with checkbox indicator
+            const featureLabel = new SKLabel({
+                text: `[ ] ${feature}`,
+                x: 250,
+                y: featureY,
+                width: 200,
+                height: 20
+            });
+            featureLabel.font = "12px Arial";
+            featureLabel.fill = "#333333";
+            this._filtersContainer.addChild(featureLabel);
+            this._featuresLabels.set(feature, featureLabel);
+            featureY += 25;
+        });
+
+        // Placeholder text indicating these will be replaced with widgets
         const placeholderNote = new SKLabel({
-            text: "(Placeholder - will be replaced with sliders)",
+            text: "(Placeholder - will be replaced with interactive widgets)",
             x: 10,
             y: 135,
-            width: 300,
+            width: 350,
             height: 15
         });
         placeholderNote.font = "10px Arial";
@@ -185,6 +248,23 @@ export class RestaurantFinderView {
         if (this._ratingMaxLabel) {
             this._ratingMaxLabel.text = maxRating.toFixed(1);
         }
+    }
+
+    // Update restaurant type display from model
+    public updateRestaurantType(selectedType: string | null): void {
+        if (this._typeLabel) {
+            this._typeLabel.text = selectedType ? selectedType : "All Types";
+        }
+    }
+
+    // Update features display from model
+    public updateFeatures(selectedFeatures: string[]): void {
+        // Update all feature labels to show checked/unchecked state
+        this._featuresLabels.forEach((label, feature) => {
+            const isSelected = selectedFeatures.includes(feature);
+            label.text = isSelected ? `[✓] ${feature}` : `[ ] ${feature}`;
+            label.fill = isSelected ? "#006600" : "#333333";
+        });
     }
 
     // Get the main container

@@ -65,6 +65,8 @@ export class RestaurantFinderController {
         const filterState = this._model.filterState;
         this._view.updateCostRange(filterState.minCost, filterState.maxCost);
         this._view.updateRatingRange(filterState.minRating, filterState.maxRating);
+        this._view.updateRestaurantType(filterState.selectedType);
+        this._view.updateFeatures(filterState.selectedFeatures);
     }
 
     // Update view when filters change
