@@ -73,4 +73,69 @@ export class RestaurantFinderController {
     public updateView(): void {
         this._view.updateMap(this._model.filteredRestaurants);
     }
+
+    // Filter change handlers - connect filter inputs to model methods
+    // These will be called by interactive widgets when they replace placeholders
+
+    // Handle cost range filter changes
+    public handleCostRangeChange(minCost: number, maxCost: number): void {
+        this._model.setMinCost(minCost);
+        this._model.setMaxCost(maxCost);
+        // Update view displays
+        const filterState = this._model.filterState;
+        this._view.updateCostRange(filterState.minCost, filterState.maxCost);
+        // Update map with filtered results
+        this.updateView();
+    }
+
+    // Handle rating range filter changes
+    public handleRatingRangeChange(minRating: number, maxRating: number): void {
+        this._model.setMinRating(minRating);
+        this._model.setMaxRating(maxRating);
+        // Update view displays
+        const filterState = this._model.filterState;
+        this._view.updateRatingRange(filterState.minRating, filterState.maxRating);
+        // Update map with filtered results
+        this.updateView();
+    }
+
+    // Handle restaurant type filter change
+    public handleTypeChange(selectedType: string | null): void {
+        this._model.setSelectedType(selectedType);
+        // Update view display
+        this._view.updateRestaurantType(selectedType);
+        // Update map with filtered results
+        this.updateView();
+    }
+
+    // Handle feature filter change (toggle a feature)
+    public handleFeatureToggle(feature: string, isSelected: boolean): void {
+        const filterState = this._model.filterState;
+        let selectedFeatures = [...filterState.selectedFeatures];
+        
+        if (isSelected) {
+            // Add feature if not already present
+            if (!selectedFeatures.includes(feature)) {
+                selectedFeatures.push(feature);
+            }
+        } else {
+            // Remove feature
+            selectedFeatures = selectedFeatures.filter(f => f !== feature);
+        }
+        
+        this._model.setSelectedFeatures(selectedFeatures);
+        // Update view display
+        this._view.updateFeatures(selectedFeatures);
+        // Update map with filtered results
+        this.updateView();
+    }
+
+    // Handle multiple features change at once
+    public handleFeaturesChange(selectedFeatures: string[]): void {
+        this._model.setSelectedFeatures(selectedFeatures);
+        // Update view display
+        this._view.updateFeatures(selectedFeatures);
+        // Update map with filtered results
+        this.updateView();
+    }
 }
