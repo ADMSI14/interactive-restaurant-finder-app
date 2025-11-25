@@ -10,6 +10,8 @@ export class RestaurantFinderView {
     private _filtersContainer: SKContainer | null = null;
     private _costMinLabel: SKLabel | null = null;
     private _costMaxLabel: SKLabel | null = null;
+    private _ratingMinLabel: SKLabel | null = null;
+    private _ratingMaxLabel: SKLabel | null = null;
 
     constructor() {
         // Create main container
@@ -25,11 +27,12 @@ export class RestaurantFinderView {
     // Create filters panel with placeholder widgets
     private createFiltersPanel(): void {
         // Create filters container positioned below the map
+        // Increased height to accommodate both cost and rating filters
         this._filtersContainer = new SKContainer({
             x: 50,
             y: 470,
             width: 500,
-            height: 120,
+            height: 160,
             fill: "#f0f0f0",
             border: "#cccccc"
         });
@@ -93,11 +96,69 @@ export class RestaurantFinderView {
         this._costMaxLabel.fill = "#333333";
         this._filtersContainer.addChild(this._costMaxLabel);
 
+        // Rating Range Filter Section
+        const ratingTitle = new SKLabel({
+            text: "Rating Range:",
+            x: 10,
+            y: 85,
+            width: 120,
+            height: 20
+        });
+        ratingTitle.font = "bold 12px Arial";
+        ratingTitle.fill = "#000000";
+        this._filtersContainer.addChild(ratingTitle);
+
+        // Min Rating Label
+        const minRatingLabel = new SKLabel({
+            text: "Min:",
+            x: 10,
+            y: 110,
+            width: 40,
+            height: 20
+        });
+        minRatingLabel.font = "12px Arial";
+        this._filtersContainer.addChild(minRatingLabel);
+
+        // Min Rating Value (placeholder - will be updated from model)
+        this._ratingMinLabel = new SKLabel({
+            text: "0.0",
+            x: 55,
+            y: 110,
+            width: 60,
+            height: 20
+        });
+        this._ratingMinLabel.font = "12px Arial";
+        this._ratingMinLabel.fill = "#333333";
+        this._filtersContainer.addChild(this._ratingMinLabel);
+
+        // Max Rating Label
+        const maxRatingLabel = new SKLabel({
+            text: "Max:",
+            x: 130,
+            y: 110,
+            width: 40,
+            height: 20
+        });
+        maxRatingLabel.font = "12px Arial";
+        this._filtersContainer.addChild(maxRatingLabel);
+
+        // Max Rating Value (placeholder - will be updated from model)
+        this._ratingMaxLabel = new SKLabel({
+            text: "5.0",
+            x: 175,
+            y: 110,
+            width: 60,
+            height: 20
+        });
+        this._ratingMaxLabel.font = "12px Arial";
+        this._ratingMaxLabel.fill = "#333333";
+        this._filtersContainer.addChild(this._ratingMaxLabel);
+
         // Placeholder text indicating these will be replaced with sliders
         const placeholderNote = new SKLabel({
             text: "(Placeholder - will be replaced with sliders)",
             x: 10,
-            y: 60,
+            y: 135,
             width: 300,
             height: 15
         });
@@ -113,6 +174,16 @@ export class RestaurantFinderView {
         }
         if (this._costMaxLabel) {
             this._costMaxLabel.text = maxCost.toString();
+        }
+    }
+
+    // Update rating range display from model
+    public updateRatingRange(minRating: number, maxRating: number): void {
+        if (this._ratingMinLabel) {
+            this._ratingMinLabel.text = minRating.toFixed(1);
+        }
+        if (this._ratingMaxLabel) {
+            this._ratingMaxLabel.text = maxRating.toFixed(1);
         }
     }
 
