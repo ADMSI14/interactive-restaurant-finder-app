@@ -7,6 +7,9 @@ export class RestaurantFinderView {
     private _container: SKContainer;
     private _detailsContainer: SKContainer | null = null;
     private _detailsLabels: SKLabel[] = [];
+    private _filtersContainer: SKContainer | null = null;
+    private _costMinLabel: SKLabel | null = null;
+    private _costMaxLabel: SKLabel | null = null;
 
     constructor() {
         // Create main container
@@ -16,6 +19,101 @@ export class RestaurantFinderView {
             width: 800,
             height: 600,
         });
+        this.createFiltersPanel();
+    }
+
+    // Create filters panel with placeholder widgets
+    private createFiltersPanel(): void {
+        // Create filters container positioned below the map
+        this._filtersContainer = new SKContainer({
+            x: 50,
+            y: 470,
+            width: 500,
+            height: 120,
+            fill: "#f0f0f0",
+            border: "#cccccc"
+        });
+        this._container.addChild(this._filtersContainer);
+
+        // Cost Range Filter Section
+        const costTitle = new SKLabel({
+            text: "Cost Range ($):",
+            x: 10,
+            y: 10,
+            width: 120,
+            height: 20
+        });
+        costTitle.font = "bold 12px Arial";
+        costTitle.fill = "#000000";
+        this._filtersContainer.addChild(costTitle);
+
+        // Min Cost Label
+        const minCostLabel = new SKLabel({
+            text: "Min:",
+            x: 10,
+            y: 35,
+            width: 40,
+            height: 20
+        });
+        minCostLabel.font = "12px Arial";
+        this._filtersContainer.addChild(minCostLabel);
+
+        // Min Cost Value (placeholder - will be updated from model)
+        this._costMinLabel = new SKLabel({
+            text: "0",
+            x: 55,
+            y: 35,
+            width: 60,
+            height: 20
+        });
+        this._costMinLabel.font = "12px Arial";
+        this._costMinLabel.fill = "#333333";
+        this._filtersContainer.addChild(this._costMinLabel);
+
+        // Max Cost Label
+        const maxCostLabel = new SKLabel({
+            text: "Max:",
+            x: 130,
+            y: 35,
+            width: 40,
+            height: 20
+        });
+        maxCostLabel.font = "12px Arial";
+        this._filtersContainer.addChild(maxCostLabel);
+
+        // Max Cost Value (placeholder - will be updated from model)
+        this._costMaxLabel = new SKLabel({
+            text: "1000",
+            x: 175,
+            y: 35,
+            width: 60,
+            height: 20
+        });
+        this._costMaxLabel.font = "12px Arial";
+        this._costMaxLabel.fill = "#333333";
+        this._filtersContainer.addChild(this._costMaxLabel);
+
+        // Placeholder text indicating these will be replaced with sliders
+        const placeholderNote = new SKLabel({
+            text: "(Placeholder - will be replaced with sliders)",
+            x: 10,
+            y: 60,
+            width: 300,
+            height: 15
+        });
+        placeholderNote.font = "10px Arial";
+        placeholderNote.fill = "#666666";
+        this._filtersContainer.addChild(placeholderNote);
+    }
+
+    // Update cost range display from model
+    public updateCostRange(minCost: number, maxCost: number): void {
+        if (this._costMinLabel) {
+            this._costMinLabel.text = minCost.toString();
+        }
+        if (this._costMaxLabel) {
+            this._costMaxLabel.text = maxCost.toString();
+        }
     }
 
     // Get the main container

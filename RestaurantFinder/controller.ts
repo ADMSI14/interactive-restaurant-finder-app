@@ -61,6 +61,9 @@ export class RestaurantFinderController {
         this._view.updateMap(this._model.filteredRestaurants);
         // Initialize details panel (no restaurant selected)
         this._view.updateRestaurantDetails(null);
+        // Initialize cost range display from model
+        const filterState = this._model.filterState;
+        this._view.updateCostRange(filterState.minCost, filterState.maxCost);
     }
 
     // Update view when filters change
