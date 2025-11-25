@@ -43,9 +43,17 @@ export class MapWidgetView {
     gc.fillStyle = "red";
     gc.fill();
     gc.closePath();
-    gc.fillStyle = "black";
-
-    gc.fillText(displayData, x - 10, y - 10);
+    
+    // Draw text if displayData is provided
+    if (displayData) {
+      gc.save();
+      gc.fillStyle = "black";
+      gc.font = "12px Arial";
+      gc.textAlign = "left";
+      gc.textBaseline = "bottom";
+      gc.fillText(displayData, x - 10, y - 10);
+      gc.restore();
+    }
 
     gc.restore();
   }
