@@ -70,8 +70,24 @@ export class RestaurantFinderController {
     }
 
     // Update view when filters change
+    // This method ensures the map and UI stay synchronized with filtered results
     public updateView(): void {
+        // Update map with filtered restaurants
         this._view.updateMap(this._model.filteredRestaurants);
+        
+        // Check if currently selected restaurant is still in filtered list
+        const selectedRestaurant = this._model.selectedRestaurant;
+        if (selectedRestaurant) {
+            const isStillVisible = this._model.filteredRestaurants.some(
+                r => r.id === selectedRestaurant.id
+            );
+            
+            // If selected restaurant is no longer in filtered list, clear selection
+            if (!isStillVisible) {
+                this._model.selectedRestaurant = null;
+                this._view.updateRestaurantDetails(null);
+            }
+        }
     }
 
     // Filter change handlers - connect filter inputs to model methods
