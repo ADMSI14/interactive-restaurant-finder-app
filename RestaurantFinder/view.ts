@@ -75,6 +75,7 @@ export class RestaurantFinderView {
     }
 
     // Update restaurant details display
+    // Applies CRAP design principles: Contrast, Repetition, Alignment, Proximity
     public updateRestaurantDetails(restaurant: Restaurant | null): void {
         // Remove existing details labels
         if (this._detailsContainer) {
@@ -84,13 +85,14 @@ export class RestaurantFinderView {
             this._detailsLabels = [];
         } else {
             // Create details container if it doesn't exist
+            // Positioned to the right of the map with consistent spacing
             this._detailsContainer = new SKContainer({
                 x: 570,
                 y: 50,
-                width: 200,
+                width: 220,
                 height: 400,
-                fill: "white",
-                border: "black"
+                fill: "#f8f8f8", // Light gray background for contrast
+                border: "#333333" // Dark border for definition
             });
             this._container.addChild(this._detailsContainer);
         }
@@ -99,35 +101,43 @@ export class RestaurantFinderView {
             // Show placeholder when no restaurant is selected
             const placeholder = new SKLabel({
                 text: "Click on a restaurant marker to see details",
-                x: 10,
-                y: 10,
-                width: 180,
-                height: 20
+                x: 15,
+                y: 20,
+                width: 190,
+                height: 40
             });
+            placeholder.font = "12px Arial";
+            placeholder.fill = "#666666"; // Muted color for placeholder
             this._detailsContainer.addChild(placeholder);
             this._detailsLabels.push(placeholder);
             return;
         }
 
-        // Create labels for restaurant details
-        let yOffset = 20;
-        const lineHeight = 25;
-        const labelWidth = 180;
-        const leftMargin = 10;
+        // Design constants following CRAP principles
+        const leftMargin = 15;        // Consistent left alignment
+        const topMargin = 15;          // Consistent top margin
+        const labelWidth = 190;        // Consistent width for alignment
+        const sectionSpacing = 15;     // Spacing between sections (Proximity)
+        const itemSpacing = 8;         // Spacing between items (Proximity)
+        const lineHeight = 20;         // Consistent line height (Repetition)
+        
+        let yOffset = topMargin;
 
-        // Name
+        // Name - Primary heading with strong contrast
         const nameLabel = new SKLabel({
             text: restaurant.name,
             x: leftMargin,
             y: yOffset,
             width: labelWidth,
-            height: lineHeight
+            height: 24
         });
-        nameLabel.font = "bold 16px Arial";
+        nameLabel.font = "bold 18px Arial";
+        nameLabel.fill = "#000000"; // Strong contrast for heading
         this._detailsContainer.addChild(nameLabel);
         this._detailsLabels.push(nameLabel);
-        yOffset += lineHeight + 5;
+        yOffset += 28; // Extra space after heading (Proximity)
 
+        // Basic Information Section - Grouped together (Proximity)
         // Type
         const typeLabel = new SKLabel({
             text: `Type: ${restaurant.type}`,
@@ -136,9 +146,11 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
+        typeLabel.font = "12px Arial";
+        typeLabel.fill = "#333333";
         this._detailsContainer.addChild(typeLabel);
         this._detailsLabels.push(typeLabel);
-        yOffset += lineHeight;
+        yOffset += lineHeight + itemSpacing;
 
         // Average Cost
         const costLabel = new SKLabel({
@@ -148,9 +160,11 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
+        costLabel.font = "12px Arial";
+        costLabel.fill = "#333333";
         this._detailsContainer.addChild(costLabel);
         this._detailsLabels.push(costLabel);
-        yOffset += lineHeight;
+        yOffset += lineHeight + itemSpacing;
 
         // Rating
         const ratingLabel = new SKLabel({
@@ -160,11 +174,13 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
+        ratingLabel.font = "12px Arial";
+        ratingLabel.fill = "#333333";
         this._detailsContainer.addChild(ratingLabel);
         this._detailsLabels.push(ratingLabel);
-        yOffset += lineHeight + 10;
+        yOffset += lineHeight + sectionSpacing;
 
-        // Features section
+        // Features section - Section heading with visual separation
         const featuresTitle = new SKLabel({
             text: "Features:",
             x: leftMargin,
@@ -172,10 +188,11 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        featuresTitle.font = "bold 12px Arial";
+        featuresTitle.font = "bold 13px Arial";
+        featuresTitle.fill = "#000000"; // Bold for section heading (Contrast)
         this._detailsContainer.addChild(featuresTitle);
         this._detailsLabels.push(featuresTitle);
-        yOffset += lineHeight;
+        yOffset += lineHeight + itemSpacing;
 
         // Check for specific features
         const hasParking = restaurant.features.includes("free parking");
@@ -191,9 +208,11 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
+        parkingLabel.font = "12px Arial";
+        parkingLabel.fill = hasParking ? "#006600" : "#666666"; // Color coding (Contrast)
         this._detailsContainer.addChild(parkingLabel);
         this._detailsLabels.push(parkingLabel);
-        yOffset += lineHeight;
+        yOffset += lineHeight + itemSpacing;
 
         // Pets Allowed
         const petsLabel = new SKLabel({
@@ -203,13 +222,14 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
+        petsLabel.font = "12px Arial";
+        petsLabel.fill = hasPets ? "#006600" : "#666666"; // Color coding (Contrast)
         this._detailsContainer.addChild(petsLabel);
         this._detailsLabels.push(petsLabel);
-        yOffset += lineHeight;
+        yOffset += lineHeight + itemSpacing;
 
-        // Additional features
+        // Additional features - Grouped with features (Proximity)
         if (hasVegetarian || hasGlutenFree) {
-            yOffset += 5;
             const additionalFeatures: string[] = [];
             if (hasVegetarian) additionalFeatures.push("Vegetarian");
             if (hasGlutenFree) additionalFeatures.push("Gluten Free");
@@ -221,28 +241,56 @@ export class RestaurantFinderView {
                 width: labelWidth,
                 height: lineHeight
             });
+            additionalLabel.font = "11px Arial";
+            additionalLabel.fill = "#006600"; // Green for available features (Contrast)
             this._detailsContainer.addChild(additionalLabel);
             this._detailsLabels.push(additionalLabel);
-            yOffset += lineHeight;
+            yOffset += lineHeight + itemSpacing;
         }
 
-        // Address
-        yOffset += 10;
+        // Address section - Visual separation before address
+        yOffset += sectionSpacing - itemSpacing;
+        const addressTitle = new SKLabel({
+            text: "Address:",
+            x: leftMargin,
+            y: yOffset,
+            width: labelWidth,
+            height: lineHeight
+        });
+        addressTitle.font = "bold 12px Arial";
+        addressTitle.fill = "#000000";
+        this._detailsContainer.addChild(addressTitle);
+        this._detailsLabels.push(addressTitle);
+        yOffset += lineHeight + itemSpacing;
+        
         const addressLabel = new SKLabel({
-            text: `Address: ${restaurant.address}`,
+            text: restaurant.address,
             x: leftMargin,
             y: yOffset,
             width: labelWidth,
             height: lineHeight * 2
         });
-        addressLabel.font = "10px Arial";
+        addressLabel.font = "11px Arial";
+        addressLabel.fill = "#333333";
         this._detailsContainer.addChild(addressLabel);
         this._detailsLabels.push(addressLabel);
-        yOffset += lineHeight * 2;
+        yOffset += lineHeight * 2 + sectionSpacing;
 
-        // Description
+        // Description section - Visual separation
         if (restaurant.description) {
-            yOffset += 5;
+            const descTitle = new SKLabel({
+                text: "Description:",
+                x: leftMargin,
+                y: yOffset,
+                width: labelWidth,
+                height: lineHeight
+            });
+            descTitle.font = "bold 12px Arial";
+            descTitle.fill = "#000000";
+            this._detailsContainer.addChild(descTitle);
+            this._detailsLabels.push(descTitle);
+            yOffset += lineHeight + itemSpacing;
+            
             const descLabel = new SKLabel({
                 text: restaurant.description,
                 x: leftMargin,
@@ -250,7 +298,8 @@ export class RestaurantFinderView {
                 width: labelWidth,
                 height: lineHeight * 3
             });
-            descLabel.font = "10px Arial";
+            descLabel.font = "11px Arial";
+            descLabel.fill = "#333333";
             this._detailsContainer.addChild(descLabel);
             this._detailsLabels.push(descLabel);
         }
