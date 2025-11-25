@@ -23,22 +23,31 @@ export class RestaurantFinderView {
         return this._container;
     }
 
-    // Convert Restaurant to MapPoint
+    // Convert Restaurant to MapPoint format for MapWidget
+    // Maps restaurant data to the MapPoint interface required by MapWidget
     private restaurantToMapPoint(restaurant: Restaurant): MapPoint {
+        // Validate that restaurant has valid coordinates
+        if (typeof restaurant.latitude !== 'number' || typeof restaurant.longitude !== 'number') {
+            throw new Error(`Invalid coordinates for restaurant ${restaurant.name}`);
+        }
+        
         return {
             latitude: restaurant.latitude,
             longitude: restaurant.longitude,
-            data: restaurant,
-            dataDisplay: "" // Will be set on hover
+            data: restaurant, // Store full restaurant object for access in events
+            dataDisplay: "" // Will be set on hover to show "Type – Rating"
         };
+    }
+
+    // Convert array of restaurants to MapPoint array
+    private restaurantsToMapPoints(restaurants: Restaurant[]): MapPoint[] {
+        return restaurants.map(r => this.restaurantToMapPoint(r));
     }
 
     // Update map with filtered restaurants
     public updateMap(restaurants: Restaurant[]): void {
         // Convert restaurants to map points
-        const mapPoints: MapPoint[] = restaurants.map(r => 
-            this.restaurantToMapPoint(r)
-        );
+        const mapPoints: MapPoint[] = this.restaurantsToMapPoints(restaurants);
 
         // Create or update map widget
         if (this._mapWidget) {
