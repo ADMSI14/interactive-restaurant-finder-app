@@ -15,28 +15,54 @@ export class RestaurantFinderView {
     private _typeLabel: SKLabel | null = null;
     private _featuresLabels: Map<string, SKLabel> = new Map();
 
+    // Layout constants following CRAP principles
+    private readonly MARGIN = 20;           // Consistent margin around all elements
+    private readonly SECTION_SPACING = 15;   // Spacing between major sections
+    private readonly HEADER_HEIGHT = 40;     // Height for header/title area
+    
     constructor() {
-        // Create main container
+        // Create main container with consistent background
         this._container = new SKContainer({
             x: 0,
             y: 0,
             width: 800,
             height: 600,
+            fill: "#ffffff",  // White background for contrast
         });
+        this.createHeader();
         this.createFiltersPanel();
     }
 
+    // Create application header/title
+    private createHeader(): void {
+        const header = new SKLabel({
+            text: "Restaurant Finder",
+            x: this.MARGIN,
+            y: this.MARGIN,
+            width: 760,
+            height: this.HEADER_HEIGHT
+        });
+        header.font = "bold 24px Arial";
+        header.fill = "#000000";
+        this._container.addChild(header);
+    }
+
     // Create filters panel with placeholder widgets
+    // Following CRAP principles: Proximity (grouped filters), Alignment, Repetition
     private createFiltersPanel(): void {
-        // Create filters container positioned below the map
-        // Increased height to accommodate all filters including features
+        // Calculate filter panel position (below map with consistent spacing)
+        const mapY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
+        const mapHeight = 400;
+        const filterY = mapY + mapHeight + this.SECTION_SPACING;
+        
+        // Create filters container positioned below the map with consistent alignment
         this._filtersContainer = new SKContainer({
-            x: 50,
-            y: 470,
+            x: this.MARGIN,  // Aligned with map (CRAP: Alignment)
+            y: filterY,
             width: 500,
             height: 240,
-            fill: "#f0f0f0",
-            border: "#cccccc"
+            fill: "#f5f5f5",  // Slightly darker for subtle contrast
+            border: "#9e9e9e"  // Medium gray border
         });
         this._container.addChild(this._filtersContainer);
 
@@ -298,19 +324,25 @@ export class RestaurantFinderView {
         // Convert restaurants to map points
         const mapPoints: MapPoint[] = this.restaurantsToMapPoints(restaurants);
 
+        // Calculate map position using layout constants (CRAP: Alignment)
+        const mapX = this.MARGIN;
+        const mapY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
+        const mapWidth = 500;
+        const mapHeight = 400;
+
         // Create or update map widget
         if (this._mapWidget) {
             // Update existing map widget's points
             this._mapWidget.points = mapPoints;
         } else {
-            // Create new map widget
+            // Create new map widget with consistent styling
             this._mapWidget = new MapWidget(mapPoints, {
-                x: 50,
-                y: 50,
-                width: 500,
-                height: 400,
-                fill: "lightgreen",
-                border: "black"
+                x: mapX,
+                y: mapY,
+                width: mapWidth,
+                height: mapHeight,
+                fill: "#e8f5e9",  // Light green background (softer than before)
+                border: "#2e7d32"  // Dark green border for contrast
             });
             
             // Add map widget to container
@@ -334,14 +366,19 @@ export class RestaurantFinderView {
             this._detailsLabels = [];
         } else {
             // Create details container if it doesn't exist
-            // Positioned to the right of the map with consistent spacing
+            // Positioned to the right of map with consistent spacing (CRAP: Alignment, Proximity)
+            const mapX = this.MARGIN;
+            const mapWidth = 500;
+            const detailsX = mapX + mapWidth + this.SECTION_SPACING;
+            const detailsY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
+            
             this._detailsContainer = new SKContainer({
-                x: 570,
-                y: 50,
-                width: 220,
+                x: detailsX,
+                y: detailsY,
+                width: 240,  // Slightly wider for better readability
                 height: 400,
-                fill: "#f8f8f8", // Light gray background for contrast
-                border: "#333333" // Dark border for definition
+                fill: "#fafafa",  // Very light gray for subtle contrast
+                border: "#424242"  // Dark gray border for definition
             });
             this._container.addChild(this._detailsContainer);
         }
