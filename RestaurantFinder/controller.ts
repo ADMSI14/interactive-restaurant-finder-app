@@ -50,6 +50,8 @@ export class RestaurantFinderController {
             const restaurant = mapPoint.data as Restaurant;
             // Set selected restaurant in model
             this._model.selectedRestaurant = restaurant;
+            // Update view to show restaurant details
+            this._view.updateRestaurantDetails(restaurant);
         }
     }
 
@@ -57,6 +59,8 @@ export class RestaurantFinderController {
     public initialize(): void {
         // Update map with filtered restaurants
         this._view.updateMap(this._model.filteredRestaurants);
+        // Initialize details panel (no restaurant selected)
+        this._view.updateRestaurantDetails(null);
     }
 
     // Update view when filters change
