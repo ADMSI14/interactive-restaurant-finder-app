@@ -65,6 +65,15 @@ export class MapWidget extends SKElement {
   > {
     return this._view.drawMapFeatureFunctions;
   }
+
+  // Update points on the map
+  public set points(points: MapPoint[]) {
+    this._model.points = points;
+  }
+
+  public get points(): MapPoint[] {
+    return this._model.points;
+  }
 }
 
 // Define the property interface based on JSON structure
