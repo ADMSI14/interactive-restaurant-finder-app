@@ -20,14 +20,12 @@ export class MapWidgetView {
     ) => void
   > = [];
 
-  // Function to draw a red circle at a given latitude and longitude
+  // Function to draw a red circle marker at a given latitude and longitude
   // todo: provide properties for drawing of markers to allow styling
   public drawMarker(
     gc: CanvasRenderingContext2D,
     lat: number,
-    lon: number,
-    displayData: string,
-    data: {}
+    lon: number
   ) {
     const { x, y } = this._model.latLonToCanvas(
       lat,
@@ -37,24 +35,64 @@ export class MapWidgetView {
     );
     gc.save();
     gc.translate(this._map.x, this._map.y);
-    // console.log(lat, lon, this._width, this._height);
     gc.beginPath();
     gc.arc(x, y, 5, 0, 2 * Math.PI);
     gc.fillStyle = "red";
     gc.fill();
     gc.closePath();
-    
-    // Draw text if displayData is provided
-    if (displayData) {
-      gc.save();
-      gc.fillStyle = "black";
-      gc.font = "12px Arial";
-      gc.textAlign = "left";
-      gc.textBaseline = "bottom";
-      gc.fillText(displayData, x - 10, y - 10);
-      gc.restore();
-    }
+    gc.restore();
+  }
 
+  // Function to draw label text for a marker
+  // Separated from marker drawing to ensure labels appear on top
+  public drawLabel(
+    gc: CanvasRenderingContext2D,
+    lat: number,
+    lon: number,
+    displayData: string
+  ) {
+    if (!displayData) return;
+    
+    const { x, y } = this._model.latLonToCanvas(
+      lat,
+      lon,
+      this._map.width,
+      this._map.height
+    );
+    
+    gc.save();
+    gc.translate(this._map.x, this._map.y);
+    
+    // Measure text for background sizing
+    gc.font = "bold 13px Arial";
+    gc.textAlign = "left";
+    gc.textBaseline = "middle";
+    const textMetrics = gc.measureText(displayData);
+    const textWidth = textMetrics.width;
+    const textHeight = 16;
+    
+    // Position: above and slightly to the right of the marker
+    const textX = x + 8;
+    const textY = y - 12;
+    
+    // Draw semi-transparent background rectangle for better contrast
+    gc.fillStyle = "rgba(0, 0, 0, 0.7)";
+    const padding = 4;
+    gc.fillRect(
+      textX - padding,
+      textY - textHeight / 2 - padding / 2,
+      textWidth + padding * 2,
+      textHeight + padding
+    );
+    
+    // Draw white text with dark outline for maximum visibility
+    gc.strokeStyle = "rgba(0, 0, 0, 0.8)";
+    gc.lineWidth = 3;
+    gc.strokeText(displayData, textX, textY);
+    
+    gc.fillStyle = "white";
+    gc.fillText(displayData, textX, textY);
+    
     gc.restore();
   }
 
@@ -76,17 +114,29 @@ export class MapWidgetView {
       func(gc, this._map.x, this._map.y, this._map.width, this._map.height);
     });
 
-    // Draw each marker on the map
-
+    // First pass: Draw all markers (without labels)
+    // This ensures markers are drawn in the correct z-order
     this._model.points.forEach((property: MapPoint) => {
       const { latitude, longitude } = property;
       this.drawMarker(
         gc,
         latitude,
-        longitude,
-        property.dataDisplay,
-        property.data
+        longitude
       );
+    });
+
+    // Second pass: Draw all labels on top of markers
+    // This ensures labels always appear in front and are never hidden
+    this._model.points.forEach((property: MapPoint) => {
+      if (property.dataDisplay) {
+        const { latitude, longitude } = property;
+        this.drawLabel(
+          gc,
+          latitude,
+          longitude,
+          property.dataDisplay
+        );
+      }
     });
 
     //draw the border if there is one
