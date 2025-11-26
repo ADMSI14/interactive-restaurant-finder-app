@@ -265,9 +265,9 @@ export class RestaurantFinderView {
             width: resultCountLabelWidth,
             height: 16
         });
-        this._resultCountLabel.font = this.FONTS.SMALL;
+        this._resultCountLabel.font = this.FONTS.SECTION_TITLE;  // Larger font for better visibility
         this._resultCountLabel.fill = "";  // No background fill
-        this._resultCountLabel.fontColour = this.COLORS.SECONDARY_TEXT;
+        this._resultCountLabel.fontColour = this.COLORS.PRIMARY_TEXT;  // Use primary text color for emphasis
         this._filtersContainer.addChild(this._resultCountLabel);
     }
 
