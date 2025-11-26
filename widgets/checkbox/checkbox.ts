@@ -12,6 +12,9 @@ export class CheckBox extends SKElement {
   private _view: CheckBoxView;
   private _controller: CheckBoxController;
 
+  // Callback for when checkbox state changes
+  public onChange: ((checked: boolean) => void) | null = null;
+
   // colour on hover
   protected _highlightColour = Style.highlightColour;
   set highlightColour(hc: string) {

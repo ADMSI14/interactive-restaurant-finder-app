@@ -219,6 +219,16 @@ export class RestaurantFinderController {
             console.log("Radio button selection callback set");
         }
         
+        // Set up checkbox onChange callbacks for feature filters
+        console.log("Setting up checkbox onChange callbacks");
+        this._view.featureCheckboxes.forEach((checkbox, feature) => {
+            checkbox.onChange = (checked: boolean) => {
+                console.log(`Checkbox onChange callback: ${feature} = ${checked}`);
+                this.handleFeatureToggle(feature, checked);
+            };
+        });
+        console.log(`Checkbox onChange callbacks set for ${this._view.featureCheckboxes.size} checkboxes`);
+        
         // Initialize slider bounds with actual data ranges
         const dataRanges = this._model.getDataRanges();
         this._view.updateCostRangeBounds(dataRanges.minCost, dataRanges.maxCost);

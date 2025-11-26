@@ -27,6 +27,12 @@ export class CheckBoxController
                 this._model.state = "hover";
                 this._model.checked = !this._model.checked;
 
+                // Call the onChange callback if it's set
+                if (this._checkbox.onChange) {
+                    this._checkbox.onChange(this._model.checked);
+                }
+
+                // Still send the event for backwards compatibility
                 if (
                   this._checkbox.sendEvent({
                     source: this,
