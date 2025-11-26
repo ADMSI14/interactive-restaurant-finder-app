@@ -6,8 +6,6 @@
 import {
   startSimpleKit,
   setSKRoot,
-  SKContainer,
-  SKLabel,
 } from "./simplekit/src/imperative-mode";
 
 import {
@@ -26,5 +24,11 @@ const controller = new RestaurantFinderController(model, view);
 // Load restaurant data into the model
 model.loadRestaurants(restaurantData);
 
-// See the examples for ideas on how to set up your application
-// You should follow the file layout provided
+// Initialize the controller (sets up widgets, filters, and displays)
+controller.initialize();
+
+// Set the SimpleKit root container to the view's container
+setSKRoot(view.container);
+
+// Start the SimpleKit application
+startSimpleKit();
