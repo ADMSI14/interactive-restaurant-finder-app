@@ -11,6 +11,7 @@ export class RestaurantFinderController {
     constructor(model: RestaurantFinderModel, view: RestaurantFinderView) {
         this._model = model;
         this._view = view;
+        this._view.setController(this);  // Set controller reference in view for widget event handling
         this.setupEventListeners();
     }
 
@@ -57,6 +58,10 @@ export class RestaurantFinderController {
 
     // Initialize the view with initial data
     public initialize(): void {
+        // Initialize type radio buttons based on available types
+        const availableTypes = this._model.getAvailableTypes();
+        this._view.initializeTypeRadioButtons(availableTypes);
+        
         // Update map with filtered restaurants
         this._view.updateMap(this._model.filteredRestaurants);
         // Initialize details panel (no restaurant selected)

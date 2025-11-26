@@ -1,5 +1,8 @@
 import { SKContainer, SKLabel } from "../simplekit/src/imperative-mode";
 import { MapWidget, MapPoint } from "../widgets/MapWidget";
+import { RangeSlider } from "../widgets/slider";
+import { RadioButton, RadioButtonGroup } from "../widgets/radiobutton";
+import { CheckBox } from "../widgets/checkbox";
 import { Restaurant } from "./model";
 
 export class RestaurantFinderView {
@@ -8,13 +11,18 @@ export class RestaurantFinderView {
     private _detailsContainer: SKContainer | null = null;
     private _detailsLabels: SKLabel[] = [];
     private _filtersContainer: SKContainer | null = null;
-    private _costMinLabel: SKLabel | null = null;
-    private _costMaxLabel: SKLabel | null = null;
-    private _ratingMinLabel: SKLabel | null = null;
-    private _ratingMaxLabel: SKLabel | null = null;
-    private _typeLabel: SKLabel | null = null;
-    private _featuresLabels: Map<string, SKLabel> = new Map();
+    private _costRangeSlider: RangeSlider | null = null;
+    private _ratingRangeSlider: RangeSlider | null = null;
+    private _typeRadioGroup: RadioButtonGroup | null = null;
+    private _typeRadioButtons: Map<string, RadioButton> = new Map();
+    private _featureCheckboxes: Map<string, CheckBox> = new Map();
     private _resultCountLabel: SKLabel | null = null;
+    
+    // Reference to controller for event handling (set after construction)
+    private _controller: any = null;
+    public setController(controller: any): void {
+        this._controller = controller;
+    }
 
     // Layout constants following CRAP principles
     private readonly MARGIN = 20;           // Consistent margin around all elements
@@ -122,51 +130,30 @@ export class RestaurantFinderView {
         costTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(costTitle);
 
-        // Min Cost Label - Aligned with consistent padding
-        const minCostLabel = new SKLabel({
-            text: "Min:",
+        // Cost Range Slider - Interactive widget for selecting cost range
+        this._costRangeSlider = new RangeSlider({
+            minValue: 0,
+            maxValue: 1000,
+            min: 0,
+            max: 1000,
             x: this.FILTER_PANEL_PADDING,
             y: this.FILTER_PANEL_PADDING + 25,
-            width: 40,
-            height: 20
+            width: 200,
+            height: 20,
+            trackColor: "#cccccc",
+            thumbColor: "#0066cc",
+            rangeColor: "#0066cc"
         });
-        minCostLabel.font = this.FONTS.BODY;
-        this._filtersContainer.addChild(minCostLabel);
-
-        // Min Cost Value (placeholder - will be updated from model)
-        this._costMinLabel = new SKLabel({
-            text: "0",
-            x: this.FILTER_PANEL_PADDING + 45,
-            y: this.FILTER_PANEL_PADDING + 25,
-            width: 60,
-            height: 20
+        // Set up event listener for cost range changes
+        (this._costRangeSlider as any).setSKEventListener("action", () => {
+            if (this._controller && this._costRangeSlider) {
+                this._controller.handleCostRangeChange(
+                    this._costRangeSlider.minValue,
+                    this._costRangeSlider.maxValue
+                );
+            }
         });
-        this._costMinLabel.font = this.FONTS.BODY;
-        this._costMinLabel.fill = this.COLORS.SECONDARY_TEXT;
-        this._filtersContainer.addChild(this._costMinLabel);
-
-        // Max Cost Label - Aligned with min cost label
-        const maxCostLabel = new SKLabel({
-            text: "Max:",
-            x: this.FILTER_PANEL_PADDING + 120,
-            y: this.FILTER_PANEL_PADDING + 25,
-            width: 40,
-            height: 20
-        });
-        maxCostLabel.font = this.FONTS.BODY;
-        this._filtersContainer.addChild(maxCostLabel);
-
-        // Max Cost Value (placeholder - will be updated from model)
-        this._costMaxLabel = new SKLabel({
-            text: "1000",
-            x: this.FILTER_PANEL_PADDING + 165,
-            y: this.FILTER_PANEL_PADDING + 25,
-            width: 60,
-            height: 20
-        });
-        this._costMaxLabel.font = this.FONTS.BODY;
-        this._costMaxLabel.fill = this.COLORS.SECONDARY_TEXT;
-        this._filtersContainer.addChild(this._costMaxLabel);
+        this._filtersContainer.addChild(this._costRangeSlider);
 
         // Rating Range Filter Section - Below cost range, aligned left
         const ratingTitle = new SKLabel({
@@ -180,51 +167,30 @@ export class RestaurantFinderView {
         ratingTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(ratingTitle);
 
-        // Min Rating Label - Aligned with cost labels
-        const minRatingLabel = new SKLabel({
-            text: "Min:",
+        // Rating Range Slider - Interactive widget for selecting rating range
+        this._ratingRangeSlider = new RangeSlider({
+            minValue: 0,
+            maxValue: 5,
+            min: 0,
+            max: 5,
             x: this.FILTER_PANEL_PADDING,
             y: this.FILTER_PANEL_PADDING + 85,
-            width: 40,
-            height: 20
+            width: 200,
+            height: 20,
+            trackColor: "#cccccc",
+            thumbColor: "#0066cc",
+            rangeColor: "#0066cc"
         });
-        minRatingLabel.font = this.FONTS.BODY;
-        this._filtersContainer.addChild(minRatingLabel);
-
-        // Min Rating Value (placeholder - will be updated from model)
-        this._ratingMinLabel = new SKLabel({
-            text: "0.0",
-            x: this.FILTER_PANEL_PADDING + 45,
-            y: this.FILTER_PANEL_PADDING + 85,
-            width: 60,
-            height: 20
+        // Set up event listener for rating range changes
+        (this._ratingRangeSlider as any).setSKEventListener("action", () => {
+            if (this._controller && this._ratingRangeSlider) {
+                this._controller.handleRatingRangeChange(
+                    this._ratingRangeSlider.minValue,
+                    this._ratingRangeSlider.maxValue
+                );
+            }
         });
-        this._ratingMinLabel.font = this.FONTS.BODY;
-        this._ratingMinLabel.fill = this.COLORS.SECONDARY_TEXT;
-        this._filtersContainer.addChild(this._ratingMinLabel);
-
-        // Max Rating Label - Aligned with cost labels
-        const maxRatingLabel = new SKLabel({
-            text: "Max:",
-            x: this.FILTER_PANEL_PADDING + 120,
-            y: this.FILTER_PANEL_PADDING + 85,
-            width: 40,
-            height: 20
-        });
-        maxRatingLabel.font = this.FONTS.BODY;
-        this._filtersContainer.addChild(maxRatingLabel);
-
-        // Max Rating Value (placeholder - will be updated from model)
-        this._ratingMaxLabel = new SKLabel({
-            text: "5.0",
-            x: this.FILTER_PANEL_PADDING + 165,
-            y: this.FILTER_PANEL_PADDING + 85,
-            width: 60,
-            height: 20
-        });
-        this._ratingMaxLabel.font = this.FONTS.BODY;
-        this._ratingMaxLabel.fill = this.COLORS.SECONDARY_TEXT;
-        this._filtersContainer.addChild(this._ratingMaxLabel);
+        this._filtersContainer.addChild(this._ratingRangeSlider);
 
         // Restaurant Type Filter Section - Below rating range, aligned left
         const typeTitle = new SKLabel({
@@ -238,17 +204,40 @@ export class RestaurantFinderView {
         typeTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(typeTitle);
 
-        // Type Selection Label (placeholder - will be replaced with radio buttons)
-        this._typeLabel = new SKLabel({
-            text: "All Types",
+        // Restaurant Type Radio Buttons - Interactive widget for selecting type
+        // Radio buttons will be created dynamically based on available types
+        // Create a group for exclusivity
+        this._typeRadioGroup = new RadioButtonGroup();
+        
+        // "All Types" radio button (null selection)
+        const allTypesRadio = new RadioButton({
+            selected: true,  // Default selection
             x: this.FILTER_PANEL_PADDING,
             y: this.FILTER_PANEL_PADDING + 145,
-            width: 200,
+            width: 20,
             height: 20
         });
-        this._typeLabel.font = this.FONTS.BODY;
-        this._typeLabel.fill = this.COLORS.SECONDARY_TEXT;
-        this._filtersContainer.addChild(this._typeLabel);
+        (allTypesRadio as any).setSKEventListener("action", () => {
+            if (this._controller) {
+                this._controller.handleTypeChange(null);
+            }
+        });
+        this._typeRadioGroup.addRadioButton(allTypesRadio);
+        this._filtersContainer.addChild(allTypesRadio);
+        
+        // "All Types" label
+        const allTypesLabel = new SKLabel({
+            text: "All Types",
+            x: this.FILTER_PANEL_PADDING + 25,
+            y: this.FILTER_PANEL_PADDING + 145,
+            width: 100,
+            height: 20
+        });
+        allTypesLabel.font = this.FONTS.BODY;
+        allTypesLabel.fill = this.COLORS.SECONDARY_TEXT;
+        this._filtersContainer.addChild(allTypesLabel);
+        
+        // Note: Additional type radio buttons will be added dynamically via updateRestaurantType method
 
         // Features Filter Section - Right side of filter panel (CRAP: Proximity - grouped separately)
         const featuresTitle = new SKLabel({
@@ -262,7 +251,7 @@ export class RestaurantFinderView {
         featuresTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(featuresTitle);
 
-        // Feature checkboxes (placeholder - will be replaced with actual checkboxes)
+        // Feature Checkboxes - Interactive widgets for selecting features
         // Positioned on right side, aligned vertically
         const features = [
             "free parking",
@@ -273,18 +262,35 @@ export class RestaurantFinderView {
 
         let featureY = this.FILTER_PANEL_PADDING + 25;
         features.forEach((feature) => {
-            // Feature label with checkbox indicator - Right side alignment
-            const featureLabel = new SKLabel({
-                text: `[ ] ${feature}`,
+            // Create checkbox widget
+            const checkbox = new CheckBox({
+                checked: false,
                 x: 250,  // Right side of panel
                 y: featureY,
-                width: 200,
+                width: 20,
+                height: 20
+            });
+            // Set up event listener for checkbox changes
+            (checkbox as any).setSKEventListener("action", () => {
+                if (this._controller) {
+                    this._controller.handleFeatureToggle(feature, checkbox.checked);
+                }
+            });
+            this._featureCheckboxes.set(feature, checkbox);
+            this._filtersContainer.addChild(checkbox);
+            
+            // Feature label next to checkbox
+            const featureLabel = new SKLabel({
+                text: feature,
+                x: 275,  // Right side of panel, after checkbox
+                y: featureY,
+                width: 150,
                 height: 20
             });
             featureLabel.font = this.FONTS.BODY;
             featureLabel.fill = this.COLORS.SECONDARY_TEXT;
             this._filtersContainer.addChild(featureLabel);
-            this._featuresLabels.set(feature, featureLabel);
+            
             featureY += 25;  // Consistent spacing between features
         });
 
@@ -299,18 +305,6 @@ export class RestaurantFinderView {
         filterPanelTitle.font = this.FONTS.SECTION_TITLE;
         filterPanelTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._container.addChild(filterPanelTitle);
-        
-        // Placeholder text indicating these will be replaced with widgets
-        const placeholderNote = new SKLabel({
-            text: "(Placeholder - will be replaced with interactive widgets)",
-            x: this.FILTER_PANEL_PADDING,
-            y: this.FILTER_PANEL_PADDING + 170,
-            width: 350,
-            height: 15
-        });
-        placeholderNote.font = this.FONTS.TINY;
-        placeholderNote.fill = this.COLORS.MUTED_TEXT;
-        this._filtersContainer.addChild(placeholderNote);
         
         // Add result count label (will be updated dynamically)
         this._resultCountLabel = new SKLabel({
@@ -327,38 +321,95 @@ export class RestaurantFinderView {
 
     // Update cost range display from model
     public updateCostRange(minCost: number, maxCost: number): void {
-        if (this._costMinLabel) {
-            this._costMinLabel.text = minCost.toString();
-        }
-        if (this._costMaxLabel) {
-            this._costMaxLabel.text = maxCost.toString();
+        if (this._costRangeSlider) {
+            this._costRangeSlider.minValue = minCost;
+            this._costRangeSlider.maxValue = maxCost;
         }
     }
 
     // Update rating range display from model
     public updateRatingRange(minRating: number, maxRating: number): void {
-        if (this._ratingMinLabel) {
-            this._ratingMinLabel.text = minRating.toFixed(1);
-        }
-        if (this._ratingMaxLabel) {
-            this._ratingMaxLabel.text = maxRating.toFixed(1);
+        if (this._ratingRangeSlider) {
+            this._ratingRangeSlider.minValue = minRating;
+            this._ratingRangeSlider.maxValue = maxRating;
         }
     }
 
     // Update restaurant type display from model
+    // Updates radio button selections based on selected type
     public updateRestaurantType(selectedType: string | null): void {
-        if (this._typeLabel) {
-            this._typeLabel.text = selectedType ? selectedType : "All Types";
+        if (!this._typeRadioGroup || !this._filtersContainer) return;
+        
+        // Update existing radio buttons if they exist
+        this._typeRadioButtons.forEach((radio, typeName) => {
+            radio.selected = (selectedType === typeName);
+        });
+        
+        // Find and update "All Types" radio button (first in group)
+        const allTypesRadio = this._typeRadioGroup.radioButtons[0];
+        if (allTypesRadio && selectedType === null) {
+            allTypesRadio.selected = true;
+        } else if (allTypesRadio && selectedType !== null) {
+            allTypesRadio.selected = false;
         }
+    }
+    
+    // Initialize restaurant type radio buttons based on available types
+    public initializeTypeRadioButtons(availableTypes: string[]): void {
+        if (!this._typeRadioGroup || !this._filtersContainer) return;
+        
+        // Clear existing type radio buttons (except "All Types")
+        this._typeRadioButtons.forEach((radio) => {
+            this._typeRadioGroup!.removeRadioButton(radio);
+            this._filtersContainer!.removeChild(radio);
+        });
+        this._typeRadioButtons.clear();
+        
+        // Create radio buttons for each available type
+        let typeY = this.FILTER_PANEL_PADDING + 145;
+        availableTypes.forEach((typeName, index) => {
+            typeY = this.FILTER_PANEL_PADDING + 145 + (index + 1) * 25;
+            
+            const typeRadio = new RadioButton({
+                selected: false,
+                x: this.FILTER_PANEL_PADDING,
+                y: typeY,
+                width: 20,
+                height: 20
+            });
+            (typeRadio as any).setSKEventListener("action", () => {
+                if (this._controller) {
+                    this._controller.handleTypeChange(typeName);
+                }
+            });
+            if (this._typeRadioGroup) {
+                this._typeRadioGroup.addRadioButton(typeRadio);
+            }
+            this._typeRadioButtons.set(typeName, typeRadio);
+            if (this._filtersContainer) {
+                this._filtersContainer.addChild(typeRadio);
+            }
+            
+            // Type label
+            const typeLabel = new SKLabel({
+                text: typeName,
+                x: this.FILTER_PANEL_PADDING + 25,
+                y: typeY,
+                width: 150,
+                height: 20
+            });
+            typeLabel.font = this.FONTS.BODY;
+            typeLabel.fill = this.COLORS.SECONDARY_TEXT;
+            this._filtersContainer.addChild(typeLabel);
+        });
     }
 
     // Update features display from model
     public updateFeatures(selectedFeatures: string[]): void {
-        // Update all feature labels to show checked/unchecked state
-        this._featuresLabels.forEach((label, feature) => {
+        // Update all feature checkboxes to show checked/unchecked state
+        this._featureCheckboxes.forEach((checkbox, feature) => {
             const isSelected = selectedFeatures.includes(feature);
-            label.text = isSelected ? `[✓] ${feature}` : `[ ] ${feature}`;
-            label.fill = isSelected ? this.COLORS.SUCCESS : this.COLORS.SECONDARY_TEXT;
+            checkbox.checked = isSelected;
         });
     }
 
