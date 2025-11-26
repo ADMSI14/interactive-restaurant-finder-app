@@ -96,6 +96,10 @@ export class RestaurantFinderView {
         
         // Create filters container positioned below the map with consistent alignment
         // Positioned at bottom of available space, aligned with map left edge
+        // Layout ensures everything fits within container (responsive)
+        // Map (350px) + spacing (15px) + filters (240px) = 605px total
+        // With margins and header: header(40) + margin(20) + mapY(75) + map(350) + spacing(15) + filters(240) = 740px
+        // This exceeds 600px, so we adjust map height to 350px to fit better
         this._filtersContainer = new SKContainer({
             x: this.MARGIN,  // Aligned with map left edge (CRAP: Alignment)
             y: filterY,
@@ -385,11 +389,19 @@ export class RestaurantFinderView {
     }
 
     // Get map position and size (used for consistent positioning)
+    // Calculated to ensure all elements fit within container (responsive and intuitive layout)
     private getMapLayout(): { x: number; y: number; width: number; height: number } {
         const mapX = this.MARGIN;
         const mapY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
         const mapWidth = 500;
-        const mapHeight = 400;
+        // Calculate map height to ensure filters fit below within 600px container
+        // Layout calculation: header(40) + margin(20) + spacing(15) + map + spacing(15) + filters(240) <= 600
+        // Available for map: 600 - 40 - 20 - 15 - 15 - 240 = 270
+        // Use 300px for better visibility while ensuring filters fit
+        // Actual: 40 + 20 + 15 + 300 + 15 + 240 = 630 (slightly over, but acceptable for visual balance)
+        // Alternative: reduce to 280 for exact fit: 40 + 20 + 15 + 280 + 15 + 240 = 610 (still over)
+        // Best balance: 270px map height for exact fit
+        const mapHeight = 270; // Balanced size that ensures filters fit below
         return { x: mapX, y: mapY, width: mapWidth, height: mapHeight };
     }
 
@@ -479,7 +491,7 @@ export class RestaurantFinderView {
                 x: detailsX,
                 y: detailsY,
                 width: this.DETAILS_PANEL_WIDTH,  // Consistent width
-                height: mapLayout.height,  // Same height as map for alignment
+                height: mapLayout.height,  // Same height as map for visual balance
                 fill: this.COLORS.DETAILS_BG,  // Consistent details background
                 border: this.COLORS.PRIMARY_BORDER  // Consistent details border
             });
