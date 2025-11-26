@@ -275,11 +275,11 @@ export class RestaurantFinderView {
             featureY += 25;  // Consistent spacing between features
         });
 
-        // Filter panel title for clarity
+        // Filter panel title for clarity (positioned above the filter panel, not inside it)
         const filterPanelTitle = new SKLabel({
             text: "Filters",
-            x: this.FILTER_PANEL_PADDING,
-            y: this.FILTER_PANEL_PADDING - 18,
+            x: this.MARGIN,  // Aligned with filter panel left edge
+            y: filterY - 18,  // Positioned just above the filter panel
             width: 200,
             height: 16
         });
@@ -288,10 +288,11 @@ export class RestaurantFinderView {
         this._container.addChild(filterPanelTitle);
         
         // Add result count label (will be updated dynamically)
+        // Position will be updated when types are initialized
         this._resultCountLabel = new SKLabel({
             text: `Showing: 0 restaurants`,
             x: this.FILTER_PANEL_PADDING,
-            y: this.FILTER_PANEL_PADDING + 195,
+            y: this.FILTER_PANEL_PADDING + 195,  // Temporary position, will be updated
             width: 200,
             height: 16
         });
@@ -361,6 +362,30 @@ export class RestaurantFinderView {
             this._filtersContainer!.removeChild(radio);
         });
         this._typeRadioButtons.clear();
+        
+        // Calculate required height for filter panel based on number of types
+        // Base elements: cost slider (25px), rating slider (60px), type title (120px)
+        // Each type button takes 25px vertical space
+        // Starting position for types: FILTER_PANEL_PADDING + 145 = 155
+        // Need: 155 + (availableTypes.length + 1) * 25 + 25 for result count
+        const typeStartY = this.FILTER_PANEL_PADDING + 145;
+        const lastTypeY = typeStartY + (availableTypes.length + 1) * 25; // +1 for "All Types"
+        const resultCountY = lastTypeY + 10; // 10px spacing after last type
+        const requiredHeight = resultCountY + 20; // +20 for result count label height and padding
+        
+        // Update filter container height if needed
+        const filtersContainer = this._filtersContainer;
+        if (filtersContainer) {
+            const currentHeight = filtersContainer.height || 240;
+            if (requiredHeight > currentHeight) {
+                filtersContainer.height = requiredHeight;
+            }
+        }
+        
+        // Update result count label position to be after all type buttons
+        if (this._resultCountLabel && this._filtersContainer) {
+            this._resultCountLabel.y = resultCountY;
+        }
         
         // Create radio buttons for each available type
         let typeY = this.FILTER_PANEL_PADDING + 145;
