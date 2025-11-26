@@ -70,6 +70,8 @@ export class RestaurantFinderController {
             if (typeGroup.radioButtons.length > 0) {
                 const allTypesRadio = typeGroup.radioButtons[0];
                 if ((allTypesRadio as any)._controller === source) {
+                    // Use RadioButtonGroup to handle selection (ensures exclusivity)
+                    typeGroup.selectRadioButton(allTypesRadio);
                     this.handleTypeChange(null);
                     return;
                 }
@@ -77,6 +79,8 @@ export class RestaurantFinderController {
             // Check other type radio buttons
             this._view.typeRadioButtons.forEach((radio, typeName) => {
                 if ((radio as any)._controller === source) {
+                    // Use RadioButtonGroup to handle selection (ensures exclusivity)
+                    typeGroup.selectRadioButton(radio);
                     this.handleTypeChange(typeName);
                     return;
                 }

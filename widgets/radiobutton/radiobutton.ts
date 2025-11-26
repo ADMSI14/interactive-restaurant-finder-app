@@ -43,15 +43,8 @@ export class RadioButton extends SKElement {
         this._view = new RadioButtonView(this, this._model);
         this._controller = new RadioButtonController(this, this._model);
 
-        // Set up action event listener to handle selection
-        this.setSKEventListener("action", (e: SKEvent) => {
-            if (this._group) {
-                this._group.selectRadioButton(this);
-            } else {
-                // If no group, toggle selection
-                this.selected = !this.selected;
-            }
-        });
+        // Note: Event handling is done via global event listener pattern
+        // The RadioButtonGroup or external controller will handle selection
 
         // Initial layout calculations
         this.layout();
