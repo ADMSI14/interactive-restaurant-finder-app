@@ -51,9 +51,9 @@ export class RestaurantFinderView {
     // Following CRAP principles: Proximity (grouped filters), Alignment, Repetition
     private createFiltersPanel(): void {
         // Calculate filter panel position (below map with consistent spacing)
-        const mapY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
-        const mapHeight = 400;
-        const filterY = mapY + mapHeight + this.SECTION_SPACING;
+        // Use getMapLayout() for consistency
+        const mapLayout = this.getMapLayout();
+        const filterY = mapLayout.y + mapLayout.height + this.SECTION_SPACING;
         
         // Create filters container positioned below the map with consistent alignment
         this._filtersContainer = new SKContainer({
@@ -319,28 +319,35 @@ export class RestaurantFinderView {
         return restaurants.map(r => this.restaurantToMapPoint(r));
     }
 
+    // Get map position and size (used for consistent positioning)
+    private getMapLayout(): { x: number; y: number; width: number; height: number } {
+        const mapX = this.MARGIN;
+        const mapY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
+        const mapWidth = 500;
+        const mapHeight = 400;
+        return { x: mapX, y: mapY, width: mapWidth, height: mapHeight };
+    }
+
     // Update map with filtered restaurants
     public updateMap(restaurants: Restaurant[]): void {
         // Convert restaurants to map points
         const mapPoints: MapPoint[] = this.restaurantsToMapPoints(restaurants);
 
-        // Calculate map position using layout constants (CRAP: Alignment)
-        const mapX = this.MARGIN;
-        const mapY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
-        const mapWidth = 500;
-        const mapHeight = 400;
+        // Get map layout using layout constants (CRAP: Alignment, Repetition)
+        const mapLayout = this.getMapLayout();
 
         // Create or update map widget
         if (this._mapWidget) {
             // Update existing map widget's points
+            // Position and size are set during creation and maintained
             this._mapWidget.points = mapPoints;
         } else {
-            // Create new map widget with consistent styling
+            // Create new map widget with consistent styling and positioning
             this._mapWidget = new MapWidget(mapPoints, {
-                x: mapX,
-                y: mapY,
-                width: mapWidth,
-                height: mapHeight,
+                x: mapLayout.x,
+                y: mapLayout.y,
+                width: mapLayout.width,
+                height: mapLayout.height,
                 fill: "#e8f5e9",  // Light green background (softer than before)
                 border: "#2e7d32"  // Dark green border for contrast
             });
@@ -367,10 +374,10 @@ export class RestaurantFinderView {
         } else {
             // Create details container if it doesn't exist
             // Positioned to the right of map with consistent spacing (CRAP: Alignment, Proximity)
-            const mapX = this.MARGIN;
-            const mapWidth = 500;
-            const detailsX = mapX + mapWidth + this.SECTION_SPACING;
-            const detailsY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
+            // Use getMapLayout() for consistency
+            const mapLayout = this.getMapLayout();
+            const detailsX = mapLayout.x + mapLayout.width + this.SECTION_SPACING;
+            const detailsY = mapLayout.y;
             
             this._detailsContainer = new SKContainer({
                 x: detailsX,
