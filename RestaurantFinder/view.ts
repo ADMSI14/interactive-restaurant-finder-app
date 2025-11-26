@@ -11,6 +11,7 @@ export class RestaurantFinderView {
     private _detailsContainer: SKContainer | null = null;
     private _detailsLabels: SKLabel[] = [];
     private _filtersContainer: SKContainer | null = null;
+    private _rightSideContainer: SKContainer | null = null;
     private _costRangeSlider: RangeSlider | null = null;
     private _ratingRangeSlider: RangeSlider | null = null;
     private _typeRadioGroup: RadioButtonGroup | null = null;
@@ -621,6 +622,22 @@ export class RestaurantFinderView {
             detailsTitle.fill = "";  // No background fill
             detailsTitle.fontColour = this.COLORS.PRIMARY_TEXT;
             this._container.addChild(detailsTitle);
+            
+            // Create right side container to fill white space beside details container
+            const rightSideX = detailsX + this.DETAILS_PANEL_WIDTH + this.SECTION_SPACING;
+            const rightSideY = detailsY;  // Aligned with details container top
+            const rightSideWidth = 250;  // Fixed width as requested
+            const rightSideHeight = 590;  // Fixed height as requested
+            
+            this._rightSideContainer = new SKContainer({
+                x: rightSideX,
+                y: rightSideY,
+                width: rightSideWidth,
+                height: rightSideHeight,
+                fill: this.COLORS.PANEL_BG,  // Same background as filters panel
+                border: this.COLORS.SECONDARY_BORDER  // Consistent border (same as filters container)
+            });
+            this._container.addChild(this._rightSideContainer);
         }
 
         if (!restaurant) {
