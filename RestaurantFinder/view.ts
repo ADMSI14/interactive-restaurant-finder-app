@@ -585,7 +585,15 @@ export class RestaurantFinderView {
         const rightSideX = detailsX + this.DETAILS_PANEL_WIDTH + this.SECTION_SPACING;
         const rightSideY = detailsY;
         const rightSideWidth = 250;
-        const rightSideHeight = 590;
+        
+        // Calculate right-side container height to align bottom with filter container bottom
+        // Filter container: y = mapLayout.y + mapLayout.height + SECTION_SPACING, height = 145
+        // Filter container bottom = mapLayout.y + mapLayout.height + SECTION_SPACING + 145
+        // Right-side container top = mapLayout.y
+        // Right-side container height = (filter container bottom) - (right-side container top)
+        const filterY = mapLayout.y + mapLayout.height + this.SECTION_SPACING;
+        const filterContainerBottom = filterY + 145; // Filter container height is 145
+        const rightSideHeight = filterContainerBottom - rightSideY;
         
         this._rightSideContainer = new SKContainer({
             x: rightSideX,
