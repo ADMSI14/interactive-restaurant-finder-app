@@ -1,8 +1,7 @@
 import { 
-  setSKEventListener, 
   SKEvent, 
   SKMouseEvent } from "../../simplekit/src/imperative-mode";
-import { MapWidget } from ".";
+import { MapWidget, MapPoint } from ".";
 import { MapWidgetModel } from "./MapWidgetModel";
 
 export class MapWidgetController {
@@ -27,7 +26,10 @@ export class MapWidgetController {
     this._model = model;
   }
 
-  handleMouseEvent(me: SKMouseEvent) {      
+  handleMouseEvent(me: SKMouseEvent) {
+      let hoveredPoint: MapPoint | null = null;
+      
+      // First pass: find the hovered point and set its dataDisplay
       this._model.points.forEach((p) => {
             const { x, y } = this._model.latLonToCanvas(
                 p.latitude,
@@ -44,17 +46,24 @@ export class MapWidgetController {
                 me.y
               ) <= 5
             ) {
+              hoveredPoint = p;
+              
               if (me.type === "mousemove")
               {
-                if (
-                  this._map.sendEvent({
-                    source: this,
-                    timeStamp: me.timeStamp,
-                    type: "point-hover",
-                    data: p
-                  } as SKEvent)
-                )
-                  return true;
+                // Set dataDisplay directly for hovered point
+                // Extract restaurant data and format display text: "Type – Rating"
+                if (p.data && typeof p.data === 'object' && 'type' in p.data && 'ratings' in p.data) {
+                  const restaurant = p.data as any;
+                  p.dataDisplay = `${restaurant.type} – ${restaurant.ratings.toFixed(1)}`;
+                }
+                
+                // Also send hover event for any external handlers (e.g., RestaurantFinderController)
+                this._map.sendEvent({
+                  source: this,
+                  timeStamp: me.timeStamp,
+                  type: "point-hover",
+                  data: p
+                } as SKEvent);
               }
               else if (me.type === "click")
               {
@@ -69,7 +78,11 @@ export class MapWidgetController {
                   return true;
               }
             }
-            else{
+      });
+      
+      // Second pass: clear dataDisplay for all non-hovered points
+      this._model.points.forEach((p) => {
+            if (p !== hoveredPoint) {
               p.dataDisplay = "";
             }
       });

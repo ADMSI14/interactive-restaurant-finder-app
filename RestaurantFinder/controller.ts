@@ -21,6 +21,7 @@ export class RestaurantFinderController {
         setSKEventListener((e: SKEvent) => {
             // Check if event is a map widget event
             if (e.type === "point-hover" || e.type === "point-click") {
+                console.log(`Received map event: ${e.type}`, e);
                 const eventData = (e as any).data;
                 // Verify it's a MapPoint with restaurant data
                 if (eventData && eventData.data && eventData.latitude && eventData.longitude) {
@@ -29,6 +30,8 @@ export class RestaurantFinderController {
                     } else if (e.type === "point-click") {
                         this.handleMapClick(e);
                     }
+                } else {
+                    console.log("Map event data validation failed:", eventData);
                 }
             }
             // Check if event is an action event from widgets
@@ -99,10 +102,23 @@ export class RestaurantFinderController {
     // Handle hover event on map marker
     private handleMapHover(e: SKEvent): void {
         const mapPoint = (e as any).data as MapPoint;
+        console.log("handleMapHover called", mapPoint);
         if (mapPoint && mapPoint.data) {
             const restaurant = mapPoint.data as Restaurant;
             // Update dataDisplay to show "Type – Rating"
-            mapPoint.dataDisplay = `${restaurant.type} – ${restaurant.ratings.toFixed(1)}`;
+            // The mapPoint should be the same reference as the one in the model
+            const displayText = `${restaurant.type} – ${restaurant.ratings.toFixed(1)}`;
+            mapPoint.dataDisplay = displayText;
+            console.log(`Hover: Set dataDisplay to "${displayText}" for restaurant ${restaurant.name}, dataDisplay is now: "${mapPoint.dataDisplay}"`);
+            
+            // Verify the MapPoint is in the model
+            const mapWidget = this._view.mapWidget;
+            if (mapWidget) {
+                const foundInModel = mapWidget.points.find(p => p === mapPoint);
+                console.log(`MapPoint found in model: ${foundInModel !== undefined}`);
+            }
+        } else {
+            console.log("Hover: mapPoint or mapPoint.data is missing", mapPoint);
         }
     }
 
