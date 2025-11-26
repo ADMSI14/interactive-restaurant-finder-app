@@ -4,8 +4,20 @@ Used to disclose AI use. Please see the course [syllabus](https://cs-3035-2025.g
 
 
 ## Disclosure
-[NAME TOOL / SERVICE] was used in order to [REASON].​ After using this tool/service, the author(s) reviewed and edited the content as needed and take full responsibility.​ The author(s) believe this fits into the course regulations for AI use because [REASON].
 
+**AI Tool Used**: ChatGpt 4
+
+**Purpose**: The AI assistant was used to help polish the RestaurantFinder application documentation (REPORT.md), including:
+- Rephrasing
+- Restructuring
+- and Enhancing the language to fit technical reports 
+
+**Review Process**: After using the AI assistant, the author reviewed all generated documentation, made necessary modifications, and verified it. 
+
+**Course Compliance**: The author believe this use of AI fits within course regulations because:
+- AI was used to better the quality of the documentation
+- It was not used to generate or implement code. 
+- The use was transparent and disclosed in this document
 
 ### Note
 
