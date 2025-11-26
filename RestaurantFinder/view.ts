@@ -255,12 +255,14 @@ export class RestaurantFinderView {
 
         
         // Add result count label (will be updated dynamically)
-        // Position will be updated when types are initialized
+        // Positioned at top center of filters container
+        const resultCountLabelWidth = 200;
+        const filtersContainerWidth = this._filtersContainer.width || 1238;
         this._resultCountLabel = new SKLabel({
             text: `Showing: 0 restaurants`,
-            x: this.FILTER_PANEL_PADDING,
-            y: this.FILTER_PANEL_PADDING + 195,  // Temporary position, will be updated
-            width: 200,
+            x: (filtersContainerWidth / 2) - (resultCountLabelWidth / 2),  // Centered horizontally
+            y: this.FILTER_PANEL_PADDING,  // At the top
+            width: resultCountLabelWidth,
             height: 16
         });
         this._resultCountLabel.font = this.FONTS.SMALL;
