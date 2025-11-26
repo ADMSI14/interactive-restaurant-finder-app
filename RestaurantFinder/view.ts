@@ -184,12 +184,25 @@ export class RestaurantFinderView {
 
         // Note: Restaurant Type section has been moved to the right-side container
 
-        // Features Filter Section - Right side of filter panel (CRAP: Proximity - grouped separately)
+        // Features Filter Section - Positioned to the right in filters container, below details container, centered to details container width
+        // Calculate position relative to details container
+        const mapLayoutForFeatures = this.getMapLayout();
+        const detailsX = mapLayoutForFeatures.x + mapLayoutForFeatures.width + this.SECTION_SPACING;
+        
+        // Calculate x position to center Features relative to details container width
+        // Details container center: detailsX + (DETAILS_PANEL_WIDTH / 2)
+        // Features x relative to filters container: (details container center) - (filters container x) - (features section width / 2)
+        const featuresSectionWidth = 200;
+        const featuresX = (detailsX + (this.DETAILS_PANEL_WIDTH / 2)) - this.MARGIN - (featuresSectionWidth / 2);
+        
+        // Position Features at the top of filters container (below details container visually)
+        const featuresY = this.FILTER_PANEL_PADDING;
+        
         const featuresTitle = new SKLabel({
             text: "Features:",
-            x: 250,  // Right side of panel
-            y: this.FILTER_PANEL_PADDING,
-            width: 100,
+            x: featuresX,
+            y: featuresY,
+            width: featuresSectionWidth,
             height: 20
         });
         featuresTitle.font = this.FONTS.FILTER_TITLE;
@@ -198,7 +211,7 @@ export class RestaurantFinderView {
         this._filtersContainer.addChild(featuresTitle);
 
         // Feature Checkboxes - Interactive widgets for selecting features
-        // Positioned on right side, aligned vertically
+        // Positioned below details container, centered to details container width, aligned vertically
         const features = [
             "free parking",
             "pets allowed",
@@ -206,13 +219,13 @@ export class RestaurantFinderView {
             "gluten free options"
         ];
 
-        let featureY = this.FILTER_PANEL_PADDING + 25;
+        let featureCheckboxY = featuresY + 25;
         features.forEach((feature) => {
             // Create checkbox widget
             const checkbox = new CheckBox({
                 checked: false,
-                x: 250,  // Right side of panel
-                y: featureY,
+                x: featuresX,
+                y: featureCheckboxY,
                 width: 20,
                 height: 20
             });
@@ -225,9 +238,9 @@ export class RestaurantFinderView {
             // Feature label next to checkbox
             const featureLabel = new SKLabel({
                 text: feature,
-                x: 275,  // Right side of panel, after checkbox
-                y: featureY,
-                width: 150,
+                x: featuresX + 25,  // After checkbox
+                y: featureCheckboxY,
+                width: 175,
                 height: 20
             });
             featureLabel.font = this.FONTS.BODY;
@@ -237,7 +250,7 @@ export class RestaurantFinderView {
                 this._filtersContainer.addChild(featureLabel);
             }
             
-            featureY += 25;  // Consistent spacing between features
+            featureCheckboxY += 25;  // Consistent spacing between features
         });
 
         
