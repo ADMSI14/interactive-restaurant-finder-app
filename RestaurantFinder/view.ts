@@ -91,7 +91,8 @@ export class RestaurantFinderView {
             height: this.HEADER_HEIGHT
         });
         header.font = this.FONTS.HEADER;
-        header.fill = this.COLORS.PRIMARY_TEXT;
+        header.fill = "";  // No background fill
+        header.fontColour = this.COLORS.PRIMARY_TEXT;
         this._container.addChild(header);
     }
 
@@ -128,7 +129,8 @@ export class RestaurantFinderView {
             height: 20
         });
         costTitle.font = this.FONTS.FILTER_TITLE;
-        costTitle.fill = this.COLORS.PRIMARY_TEXT;
+        costTitle.fill = "";  // No background fill
+        costTitle.fontColour = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(costTitle);
 
         // Cost Range Slider - Interactive widget for selecting cost range
@@ -157,7 +159,8 @@ export class RestaurantFinderView {
             height: 20
         });
         ratingTitle.font = this.FONTS.FILTER_TITLE;
-        ratingTitle.fill = this.COLORS.PRIMARY_TEXT;
+        ratingTitle.fill = "";  // No background fill
+        ratingTitle.fontColour = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(ratingTitle);
 
         // Rating Range Slider - Interactive widget for selecting rating range
@@ -186,7 +189,8 @@ export class RestaurantFinderView {
             height: 20
         });
         typeTitle.font = this.FONTS.FILTER_TITLE;
-        typeTitle.fill = this.COLORS.PRIMARY_TEXT;
+        typeTitle.fill = "";  // No background fill
+        typeTitle.fontColour = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(typeTitle);
 
         // Restaurant Type Radio Buttons - Interactive widget for selecting type
@@ -215,7 +219,8 @@ export class RestaurantFinderView {
             height: 20
         });
         allTypesLabel.font = this.FONTS.BODY;
-        allTypesLabel.fill = this.COLORS.SECONDARY_TEXT;
+        allTypesLabel.fill = "";  // No background fill
+        allTypesLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         if (this._filtersContainer) {
             this._filtersContainer.addChild(allTypesLabel);
         }
@@ -231,7 +236,8 @@ export class RestaurantFinderView {
             height: 20
         });
         featuresTitle.font = this.FONTS.FILTER_TITLE;
-        featuresTitle.fill = this.COLORS.PRIMARY_TEXT;
+        featuresTitle.fill = "";  // No background fill
+        featuresTitle.fontColour = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(featuresTitle);
 
         // Feature Checkboxes - Interactive widgets for selecting features
@@ -268,7 +274,8 @@ export class RestaurantFinderView {
                 height: 20
             });
             featureLabel.font = this.FONTS.BODY;
-            featureLabel.fill = this.COLORS.SECONDARY_TEXT;
+            featureLabel.fill = "";  // No background fill
+            featureLabel.fontColour = this.COLORS.SECONDARY_TEXT;
             if (this._filtersContainer) {
                 this._filtersContainer.addChild(featureLabel);
             }
@@ -285,7 +292,8 @@ export class RestaurantFinderView {
             height: 16
         });
         filterPanelTitle.font = this.FONTS.SECTION_TITLE;
-        filterPanelTitle.fill = this.COLORS.PRIMARY_TEXT;
+        filterPanelTitle.fill = "";  // No background fill
+        filterPanelTitle.fontColour = this.COLORS.PRIMARY_TEXT;
         this._container.addChild(filterPanelTitle);
         
         // Add result count label (will be updated dynamically)
@@ -298,7 +306,8 @@ export class RestaurantFinderView {
             height: 16
         });
         this._resultCountLabel.font = this.FONTS.SMALL;
-        this._resultCountLabel.fill = this.COLORS.SECONDARY_TEXT;
+        this._resultCountLabel.fill = "";  // No background fill
+        this._resultCountLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._resultCountLabel);
     }
 
@@ -426,7 +435,8 @@ export class RestaurantFinderView {
                 height: 20
             });
             typeLabel.font = this.FONTS.BODY;
-            typeLabel.fill = this.COLORS.SECONDARY_TEXT;
+            typeLabel.fill = "";  // No background fill
+            typeLabel.fontColour = this.COLORS.SECONDARY_TEXT;
             if (this._filtersContainer) {
                 this._filtersContainer.addChild(typeLabel);
             }
@@ -549,7 +559,8 @@ export class RestaurantFinderView {
                 height: 16
             });
             mapTitle.font = this.FONTS.SECTION_TITLE;
-            mapTitle.fill = this.COLORS.PRIMARY_TEXT;
+            mapTitle.fill = "";  // No background fill
+            mapTitle.fontColour = this.COLORS.PRIMARY_TEXT;
             this._container.addChild(mapTitle);
             
             // Add instruction text below map title
@@ -561,7 +572,8 @@ export class RestaurantFinderView {
                 height: 14
             });
             mapInstruction.font = this.FONTS.SMALL;
-            mapInstruction.fill = this.COLORS.MUTED_TEXT;
+            mapInstruction.fill = "";  // No background fill
+            mapInstruction.fontColour = this.COLORS.MUTED_TEXT;
             this._container.addChild(mapInstruction);
         }
     }
@@ -607,7 +619,8 @@ export class RestaurantFinderView {
                 height: 16
             });
             detailsTitle.font = this.FONTS.SECTION_TITLE;
-            detailsTitle.fill = this.COLORS.PRIMARY_TEXT;
+            detailsTitle.fill = "";  // No background fill
+            detailsTitle.fontColour = this.COLORS.PRIMARY_TEXT;
             this._container.addChild(detailsTitle);
         }
 
@@ -622,7 +635,8 @@ export class RestaurantFinderView {
                 height: 40
             });
             placeholder.font = this.FONTS.BODY;
-            placeholder.fill = this.COLORS.MUTED_TEXT; // Consistent muted color
+            placeholder.fill = "";  // No background fill
+            placeholder.fontColour = this.COLORS.MUTED_TEXT; // Consistent muted color
             this._detailsContainer.addChild(placeholder);
             this._detailsLabels.push(placeholder);
             return;
@@ -648,7 +662,8 @@ export class RestaurantFinderView {
             height: 24
         });
         nameLabel.font = "bold 18px Arial";  // Restaurant name - larger than section titles
-        nameLabel.fill = this.COLORS.PRIMARY_TEXT; // Strong contrast for heading
+        nameLabel.fill = "";  // No background fill
+        nameLabel.fontColour = this.COLORS.PRIMARY_TEXT; // Strong contrast for heading
         this._detailsContainer.addChild(nameLabel);
         this._detailsLabels.push(nameLabel);
         yOffset += 28; // Extra space after heading (Proximity)
@@ -663,7 +678,8 @@ export class RestaurantFinderView {
             height: lineHeight
         });
         typeLabel.font = this.FONTS.BODY;
-        typeLabel.fill = this.COLORS.SECONDARY_TEXT;
+        typeLabel.fill = "";  // No background fill
+        typeLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(typeLabel);
         this._detailsLabels.push(typeLabel);
         yOffset += lineHeight + itemSpacing;
@@ -677,7 +693,8 @@ export class RestaurantFinderView {
             height: lineHeight
         });
         costLabel.font = this.FONTS.BODY;
-        costLabel.fill = this.COLORS.SECONDARY_TEXT;
+        costLabel.fill = "";  // No background fill
+        costLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(costLabel);
         this._detailsLabels.push(costLabel);
         yOffset += lineHeight + itemSpacing;
@@ -691,7 +708,8 @@ export class RestaurantFinderView {
             height: lineHeight
         });
         ratingLabel.font = this.FONTS.BODY;
-        ratingLabel.fill = this.COLORS.SECONDARY_TEXT;
+        ratingLabel.fill = "";  // No background fill
+        ratingLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(ratingLabel);
         this._detailsLabels.push(ratingLabel);
         yOffset += lineHeight + sectionSpacing;
@@ -705,7 +723,8 @@ export class RestaurantFinderView {
             height: lineHeight
         });
         featuresTitle.font = "bold 13px Arial";  // Slightly larger than filter titles
-        featuresTitle.fill = this.COLORS.PRIMARY_TEXT; // Bold for section heading (Contrast)
+        featuresTitle.fill = "";  // No background fill
+        featuresTitle.fontColour = this.COLORS.PRIMARY_TEXT; // Bold for section heading (Contrast)
         this._detailsContainer.addChild(featuresTitle);
         this._detailsLabels.push(featuresTitle);
         yOffset += lineHeight + itemSpacing;
@@ -758,7 +777,8 @@ export class RestaurantFinderView {
                 height: lineHeight
             });
             additionalLabel.font = this.FONTS.SMALL;
-            additionalLabel.fill = this.COLORS.SUCCESS; // Green for available features (Contrast)
+            additionalLabel.fill = "";  // No background fill
+            additionalLabel.fontColour = this.COLORS.SUCCESS; // Green for available features (Contrast)
             this._detailsContainer.addChild(additionalLabel);
             this._detailsLabels.push(additionalLabel);
             yOffset += lineHeight + itemSpacing;
@@ -774,7 +794,8 @@ export class RestaurantFinderView {
             height: lineHeight
         });
         addressTitle.font = this.FONTS.FILTER_TITLE;
-        addressTitle.fill = this.COLORS.PRIMARY_TEXT;
+        addressTitle.fill = "";  // No background fill
+        addressTitle.fontColour = this.COLORS.PRIMARY_TEXT;
         this._detailsContainer.addChild(addressTitle);
         this._detailsLabels.push(addressTitle);
         yOffset += lineHeight + itemSpacing;
@@ -787,7 +808,8 @@ export class RestaurantFinderView {
             height: lineHeight * 2
         });
         addressLabel.font = this.FONTS.SMALL;
-        addressLabel.fill = this.COLORS.SECONDARY_TEXT;
+        addressLabel.fill = "";  // No background fill
+        addressLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(addressLabel);
         this._detailsLabels.push(addressLabel);
         yOffset += lineHeight * 2 + sectionSpacing;
@@ -802,7 +824,8 @@ export class RestaurantFinderView {
                 height: lineHeight
             });
             descTitle.font = this.FONTS.FILTER_TITLE;
-            descTitle.fill = this.COLORS.PRIMARY_TEXT;
+            descTitle.fill = "";  // No background fill
+            descTitle.fontColour = this.COLORS.PRIMARY_TEXT;
             this._detailsContainer.addChild(descTitle);
             this._detailsLabels.push(descTitle);
             yOffset += lineHeight + itemSpacing;
@@ -815,7 +838,8 @@ export class RestaurantFinderView {
                 height: lineHeight * 3
             });
             descLabel.font = this.FONTS.SMALL;
-            descLabel.fill = this.COLORS.SECONDARY_TEXT;
+            descLabel.fill = "";  // No background fill
+            descLabel.fontColour = this.COLORS.SECONDARY_TEXT;
             this._detailsContainer.addChild(descLabel);
             this._detailsLabels.push(descLabel);
         }
