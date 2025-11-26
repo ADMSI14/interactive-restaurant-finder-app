@@ -240,18 +240,6 @@ export class RestaurantFinderView {
             featureY += 25;  // Consistent spacing between features
         });
 
-        // Filter panel title for clarity (positioned above the filter panel, not inside it)
-        const filterPanelTitle = new SKLabel({
-            text: "Filters",
-            x: this.MARGIN,  // Aligned with filter panel left edge
-            y: filterY - 18,  // Positioned just above the filter panel
-            width: 200,
-            height: 16
-        });
-        filterPanelTitle.font = this.FONTS.SECTION_TITLE;
-        filterPanelTitle.fill = "";  // No background fill
-        filterPanelTitle.fontColour = this.COLORS.PRIMARY_TEXT;
-        this._container.addChild(filterPanelTitle);
         
         // Add result count label (will be updated dynamically)
         // Position will be updated when types are initialized
@@ -604,6 +592,20 @@ export class RestaurantFinderView {
             border: this.COLORS.SECONDARY_BORDER
         });
         this._container.addChild(this._rightSideContainer);
+        
+        // Filters title - positioned at top of right-side container, centered
+        const filtersTitleWidth = 200;
+        const filtersTitle = new SKLabel({
+            text: "Filters",
+            x: rightSideX + (rightSideWidth / 2) - (filtersTitleWidth / 2),  // Centered horizontally
+            y: rightSideY - 18,  // Positioned just above the right-side container
+            width: filtersTitleWidth,
+            height: 16
+        });
+        filtersTitle.font = this.FONTS.SECTION_TITLE;
+        filtersTitle.fill = "";  // No background fill
+        filtersTitle.fontColour = this.COLORS.PRIMARY_TEXT;
+        this._container.addChild(filtersTitle);
         
         // Restaurant Type Filter Section - Moved to right-side container
         const typeTitle = new SKLabel({
