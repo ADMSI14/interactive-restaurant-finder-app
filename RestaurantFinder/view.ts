@@ -29,7 +29,7 @@ export class RestaurantFinderView {
     private readonly SECTION_SPACING = 15;   // Spacing between major sections
     private readonly HEADER_HEIGHT = 40;     // Height for header/title area
     private readonly FILTER_PANEL_PADDING = 10;  // Internal padding for filter panel
-    private readonly DETAILS_PANEL_WIDTH = 240;  // Width of details panel
+    private readonly DETAILS_PANEL_WIDTH = 410;  // Width of details panel (increased for better readability)
     private readonly DETAILS_PANEL_PADDING = 15;  // Internal padding for details panel
     
     // Style constants for consistent styling (CRAP: Repetition)
@@ -602,11 +602,12 @@ export class RestaurantFinderView {
             const detailsX = mapLayout.x + mapLayout.width + this.SECTION_SPACING;
             const detailsY = mapLayout.y;  // Aligned with map top (CRAP: Alignment)
             
+            // Set details container height to fixed value
             this._detailsContainer = new SKContainer({
                 x: detailsX,
                 y: detailsY,
                 width: this.DETAILS_PANEL_WIDTH,  // Consistent width
-                height: mapLayout.height,  // Same height as map for visual balance
+                height: 439,  // Fixed height
                 fill: this.COLORS.DETAILS_BG,  // Consistent details background
                 border: this.COLORS.PRIMARY_BORDER  // Consistent details border
             });
@@ -749,7 +750,8 @@ export class RestaurantFinderView {
             height: lineHeight
         });
         parkingLabel.font = this.FONTS.BODY;
-        parkingLabel.fill = hasParking ? this.COLORS.SUCCESS : this.COLORS.MUTED_TEXT; // Color coding (Contrast)
+        parkingLabel.fill = "";  // No background fill
+        parkingLabel.fontColour = hasParking ? this.COLORS.SUCCESS : this.COLORS.MUTED_TEXT; // Color coding (Contrast)
         this._detailsContainer.addChild(parkingLabel);
         this._detailsLabels.push(parkingLabel);
         yOffset += lineHeight + itemSpacing;
@@ -763,7 +765,8 @@ export class RestaurantFinderView {
             height: lineHeight
         });
         petsLabel.font = this.FONTS.BODY;
-        petsLabel.fill = hasPets ? this.COLORS.SUCCESS : this.COLORS.MUTED_TEXT; // Color coding (Contrast)
+        petsLabel.fill = "";  // No background fill
+        petsLabel.fontColour = hasPets ? this.COLORS.SUCCESS : this.COLORS.MUTED_TEXT; // Color coding (Contrast)
         this._detailsContainer.addChild(petsLabel);
         this._detailsLabels.push(petsLabel);
         yOffset += lineHeight + itemSpacing;
@@ -847,6 +850,25 @@ export class RestaurantFinderView {
             descLabel.fontColour = this.COLORS.SECONDARY_TEXT;
             this._detailsContainer.addChild(descLabel);
             this._detailsLabels.push(descLabel);
+            yOffset += lineHeight * 3;
+        }
+        
+        // Update container height if content extends beyond current height
+        // Add padding at bottom to ensure all content fits
+        const requiredHeight = yOffset + this.DETAILS_PANEL_PADDING;
+        if (this._detailsContainer) {
+            const currentHeight = this._detailsContainer.height || 0;
+            if (requiredHeight > currentHeight) {
+                this._detailsContainer.height = requiredHeight;
+                
+                // Also update main container height if details container extends beyond it
+                const detailsContainerBottom = this._detailsContainer.y + requiredHeight;
+                const containerBottom = this._container.height || 600;
+                if (detailsContainerBottom > containerBottom) {
+                    // Add some padding at the bottom
+                    this._container.height = detailsContainerBottom + this.MARGIN;
+                }
+            }
         }
     }
 }
