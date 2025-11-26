@@ -85,6 +85,7 @@ export class RadioButton extends SKElement {
 export class RadioButtonGroup {
     private _radioButtons: RadioButton[] = [];
     private _selectedRadioButton: RadioButton | null = null;
+    public onSelectionChange: ((radioButton: RadioButton, index: number) => void) | null = null;
 
     // Add a radio button to this group
     public addRadioButton(radioButton: RadioButton): void {
@@ -129,6 +130,12 @@ export class RadioButtonGroup {
         // Select the clicked radio button
         radioButton.selected = true;
         this._selectedRadioButton = radioButton;
+        
+        // Call the callback if set
+        if (this.onSelectionChange) {
+            const index = this._radioButtons.indexOf(radioButton);
+            this.onSelectionChange(radioButton, index);
+        }
     }
 
     // Get the currently selected radio button

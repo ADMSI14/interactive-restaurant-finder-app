@@ -36,7 +36,10 @@ export class RestaurantFinderController {
             }
             // Check if event is an action event from widgets
             else if (e.type === "action") {
+                console.log("Received action event:", e);
                 this.handleWidgetAction(e);
+            } else {
+                console.log("Received other event type:", e.type, e);
             }
         });
     }
@@ -44,11 +47,17 @@ export class RestaurantFinderController {
     // Handle action events from widgets
     private handleWidgetAction(e: SKEvent): void {
         const source = e.source;
-        if (!source) return;
+        if (!source) {
+            console.log("handleWidgetAction: No event source");
+            return;
+        }
+        
+        console.log("handleWidgetAction: Received action event, source:", source);
         
         // Check if event is from cost range slider
         const costSlider = this._view.costRangeSlider;
         if (costSlider && (costSlider as any)._controller === source) {
+            console.log("handleWidgetAction: Event from cost range slider");
             this.handleCostRangeChange(
                 costSlider.minValue,
                 costSlider.maxValue
@@ -59,6 +68,7 @@ export class RestaurantFinderController {
         // Check if event is from rating range slider
         const ratingSlider = this._view.ratingRangeSlider;
         if (ratingSlider && (ratingSlider as any)._controller === source) {
+            console.log("handleWidgetAction: Event from rating range slider");
             this.handleRatingRangeChange(
                 ratingSlider.minValue,
                 ratingSlider.maxValue
@@ -69,25 +79,43 @@ export class RestaurantFinderController {
         // Check if event is from a radio button (type filter)
         const typeGroup = this._view.typeRadioGroup;
         if (typeGroup) {
-            // Check "All Types" radio button (first in group)
-            if (typeGroup.radioButtons.length > 0) {
-                const allTypesRadio = typeGroup.radioButtons[0];
-                if ((allTypesRadio as any)._controller === source) {
+            console.log("handleWidgetAction: Checking radio buttons, group has", typeGroup.radioButtons.length, "buttons");
+            // Check all radio buttons in the group to find which one sent the event
+            // The event source is the RadioButtonController, so we need to find the radio button that owns it
+            for (let i = 0; i < typeGroup.radioButtons.length; i++) {
+                const radio = typeGroup.radioButtons[i];
+                // Access the private _controller property
+                const radioController = (radio as any)._controller;
+                console.log(`handleWidgetAction: Checking radio button ${i}, controller:`, radioController, "source:", source, "match:", radioController === source);
+                if (radioController === source) {
+                    console.log(`handleWidgetAction: Match found! Radio button ${i} was clicked`);
                     // Use RadioButtonGroup to handle selection (ensures exclusivity)
-                    typeGroup.selectRadioButton(allTypesRadio);
-                    this.handleTypeChange(null);
+                    typeGroup.selectRadioButton(radio);
+                    // First radio button (index 0) is "All Types"
+                    if (i === 0) {
+                        console.log("handleWidgetAction: All Types selected");
+                        this.handleTypeChange(null);
+                    } else {
+                        // Find the type name for this radio button
+                        let typeName: string | null = null;
+                        this._view.typeRadioButtons.forEach((r, name) => {
+                            if (r === radio) {
+                                typeName = name;
+                            }
+                        });
+                        if (typeName) {
+                            console.log("handleWidgetAction: Type selected:", typeName);
+                            this.handleTypeChange(typeName);
+                        } else {
+                            console.log("handleWidgetAction: Warning - could not find type name for radio button");
+                        }
+                    }
                     return;
                 }
             }
-            // Check other type radio buttons
-            this._view.typeRadioButtons.forEach((radio, typeName) => {
-                if ((radio as any)._controller === source) {
-                    // Use RadioButtonGroup to handle selection (ensures exclusivity)
-                    typeGroup.selectRadioButton(radio);
-                    this.handleTypeChange(typeName);
-                    return;
-                }
-            });
+            console.log("handleWidgetAction: No matching radio button found");
+        } else {
+            console.log("handleWidgetAction: No type group available");
         }
         
         // Check if event is from a checkbox (feature filter)
@@ -161,6 +189,35 @@ export class RestaurantFinderController {
         // Initialize type radio buttons based on available types
         const availableTypes = this._model.getAvailableTypes();
         this._view.initializeTypeRadioButtons(availableTypes);
+        
+        // Set up radio button selection callback (similar to map widget callback)
+        const typeGroup = this._view.typeRadioGroup;
+        if (typeGroup) {
+            console.log("Setting up radio button selection callback");
+            typeGroup.onSelectionChange = (radioButton: any, index: number) => {
+                console.log(`RadioButtonGroup: Selection changed, index: ${index}`);
+                // Index 0 is "All Types"
+                if (index === 0) {
+                    console.log("RadioButtonGroup: All Types selected");
+                    this.handleTypeChange(null);
+                } else {
+                    // Find the type name for this radio button
+                    let typeName: string | null = null;
+                    this._view.typeRadioButtons.forEach((r, name) => {
+                        if (r === radioButton) {
+                            typeName = name;
+                        }
+                    });
+                    if (typeName) {
+                        console.log("RadioButtonGroup: Type selected:", typeName);
+                        this.handleTypeChange(typeName);
+                    } else {
+                        console.log("RadioButtonGroup: Warning - could not find type name for radio button");
+                    }
+                }
+            };
+            console.log("Radio button selection callback set");
+        }
         
         // Initialize slider bounds with actual data ranges
         const dataRanges = this._model.getDataRanges();
