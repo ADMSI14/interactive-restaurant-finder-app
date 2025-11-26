@@ -143,7 +143,7 @@ export class RestaurantFinderView {
             max: 1000,
             x: this.FILTER_PANEL_PADDING + 30,  // Moved inside a bit
             y: this.FILTER_PANEL_PADDING + 25,
-            width: 200,
+            width: 300,  // Increased width to make slider longer
             height: 20,
             trackColor: "#cccccc",
             thumbColor: "#0066cc",
@@ -173,7 +173,7 @@ export class RestaurantFinderView {
             max: 5,
             x: this.FILTER_PANEL_PADDING + 30,  // Moved inside a bit
             y: this.FILTER_PANEL_PADDING + 85,
-            width: 200,
+            width: 300,  // Increased width to make slider longer
             height: 20,
             trackColor: "#cccccc",
             thumbColor: "#0066cc",
