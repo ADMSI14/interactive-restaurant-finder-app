@@ -327,11 +327,27 @@ export class RestaurantFinderView {
         }
     }
 
+    // Update cost range slider bounds (min/max possible values)
+    public updateCostRangeBounds(minCost: number, maxCost: number): void {
+        if (this._costRangeSlider) {
+            this._costRangeSlider.min = minCost;
+            this._costRangeSlider.max = maxCost;
+        }
+    }
+
     // Update rating range display from model
     public updateRatingRange(minRating: number, maxRating: number): void {
         if (this._ratingRangeSlider) {
             this._ratingRangeSlider.minValue = minRating;
             this._ratingRangeSlider.maxValue = maxRating;
+        }
+    }
+
+    // Update rating range slider bounds (min/max possible values)
+    public updateRatingRangeBounds(minRating: number, maxRating: number): void {
+        if (this._ratingRangeSlider) {
+            this._ratingRangeSlider.min = minRating;
+            this._ratingRangeSlider.max = maxRating;
         }
     }
 

@@ -198,6 +198,29 @@ export class RestaurantFinderModel {
         return Array.from(types).sort();
     }
 
+    // Get actual data ranges (min/max possible values from all restaurants)
+    // These represent the full range of data, not the current filter values
+    public getDataRanges(): { minCost: number; maxCost: number; minRating: number; maxRating: number } {
+        if (this._allRestaurants.length === 0) {
+            return {
+                minCost: 0,
+                maxCost: 1000,
+                minRating: 0,
+                maxRating: 5
+            };
+        }
+
+        const prices = this._allRestaurants.map(r => r.avg_price);
+        const ratings = this._allRestaurants.map(r => r.ratings);
+
+        return {
+            minCost: Math.min(...prices),
+            maxCost: Math.max(...prices),
+            minRating: Math.min(...ratings),
+            maxRating: Math.max(...ratings)
+        };
+    }
+
     // Get list of all available features from all restaurants
     public getAvailableFeatures(): string[] {
         const features = new Set<string>();

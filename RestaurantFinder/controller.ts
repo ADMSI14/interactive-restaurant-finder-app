@@ -62,6 +62,11 @@ export class RestaurantFinderController {
         const availableTypes = this._model.getAvailableTypes();
         this._view.initializeTypeRadioButtons(availableTypes);
         
+        // Initialize slider bounds with actual data ranges
+        const dataRanges = this._model.getDataRanges();
+        this._view.updateCostRangeBounds(dataRanges.minCost, dataRanges.maxCost);
+        this._view.updateRatingRangeBounds(dataRanges.minRating, dataRanges.maxRating);
+        
         // Update map with filtered restaurants
         this._view.updateMap(this._model.filteredRestaurants);
         // Initialize details panel (no restaurant selected)
