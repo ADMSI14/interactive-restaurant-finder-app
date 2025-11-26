@@ -586,8 +586,10 @@ export class RestaurantFinderView {
     // Update restaurant details display
     // Applies CRAP design principles: Contrast, Repetition, Alignment, Proximity
     public updateRestaurantDetails(restaurant: Restaurant | null): void {
+        console.log("updateRestaurantDetails called with:", restaurant ? restaurant.name : "null");
         // Remove existing details labels
         if (this._detailsContainer) {
+            console.log(`Removing ${this._detailsLabels.length} existing labels`);
             this._detailsLabels.forEach(label => {
                 this._detailsContainer!.removeChild(label);
             });
@@ -625,6 +627,7 @@ export class RestaurantFinderView {
         }
 
         if (!restaurant) {
+            console.log("updateRestaurantDetails: restaurant is null, showing placeholder");
             // Show placeholder when no restaurant is selected
             // Positioned with consistent padding (CRAP: Alignment)
             const placeholder = new SKLabel({
@@ -641,6 +644,8 @@ export class RestaurantFinderView {
             this._detailsLabels.push(placeholder);
             return;
         }
+        
+        console.log("updateRestaurantDetails: Creating labels for restaurant:", restaurant.name);
 
         // Design constants following CRAP principles
         // Use layout constants for consistency

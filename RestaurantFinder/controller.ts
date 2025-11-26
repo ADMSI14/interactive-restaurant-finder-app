@@ -1,7 +1,7 @@
 import { setSKEventListener, SKEvent } from "../simplekit/src/imperative-mode";
 import { RestaurantFinderModel } from "./model";
 import { RestaurantFinderView } from "./view";
-import { MapPoint } from "../widgets/MapWidget";
+import { MapWidget, MapPoint } from "../widgets/MapWidget";
 import { Restaurant } from "./model";
 
 export class RestaurantFinderController {
@@ -124,14 +124,36 @@ export class RestaurantFinderController {
 
     // Handle click event on map marker
     private handleMapClick(e: SKEvent): void {
+        console.log("handleMapClick called", e);
         const mapPoint = (e as any).data as MapPoint;
+        console.log("mapPoint:", mapPoint);
         if (mapPoint && mapPoint.data) {
             const restaurant = mapPoint.data as Restaurant;
+            console.log("Restaurant extracted:", restaurant ? restaurant.name : "null");
             // Set selected restaurant in model
             this._model.selectedRestaurant = restaurant;
             // Update view to show restaurant details
             this._view.updateRestaurantDetails(restaurant);
+            console.log("View updated with restaurant details");
+        } else {
+            console.log("handleMapClick: mapPoint or mapPoint.data is missing", mapPoint);
         }
+    }
+
+    // Called when map widget is created (from view)
+    public onMapWidgetCreated(mapWidget: MapWidget): void {
+        console.log("onMapWidgetCreated called, setting up click handler");
+        // Set up map click handler using callback
+        mapWidget.onPointClick = (mapPoint: MapPoint) => {
+            console.log("MapWidget onPointClick callback called", mapPoint);
+            if (mapPoint && mapPoint.data) {
+                const restaurant = mapPoint.data as Restaurant;
+                console.log("Restaurant from callback:", restaurant ? restaurant.name : "null");
+                this._model.selectedRestaurant = restaurant;
+                this._view.updateRestaurantDetails(restaurant);
+            }
+        };
+        console.log("Click handler set on map widget");
     }
 
     // Initialize the view with initial data
@@ -147,6 +169,25 @@ export class RestaurantFinderController {
         
         // Update map with filtered restaurants
         this._view.updateMap(this._model.filteredRestaurants);
+        
+        // Set up map click handler after map is created/updated
+        const mapWidget = this._view.mapWidget;
+        if (mapWidget) {
+            console.log("Setting up click handler on map widget in initialize()");
+            mapWidget.onPointClick = (mapPoint: MapPoint) => {
+                console.log("MapWidget onPointClick callback called", mapPoint);
+                if (mapPoint && mapPoint.data) {
+                    const restaurant = mapPoint.data as Restaurant;
+                    console.log("Restaurant from callback:", restaurant ? restaurant.name : "null");
+                    this._model.selectedRestaurant = restaurant;
+                    this._view.updateRestaurantDetails(restaurant);
+                }
+            };
+            console.log("Click handler set on map widget");
+        } else {
+            console.log("Map widget not available in initialize()");
+        }
+        
         // Initialize details panel (no restaurant selected)
         this._view.updateRestaurantDetails(null);
         // Initialize filter displays from model

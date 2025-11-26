@@ -12,6 +12,7 @@ export class MapWidget extends SKElement {
   private _model: MapWidgetModel;
   private _view: MapWidgetView;
   private _controller: MapWidgetController;
+  private _onPointClick: ((mapPoint: MapPoint) => void) | null = null;
 
   constructor(
     points: MapPoint[],
@@ -48,9 +49,10 @@ export class MapWidget extends SKElement {
 
   // Handle mouse events.
   handleMouseEvent(me: SKMouseEvent): boolean {
-    this._controller.handleMouseEvent(me);
+    const handled = this._controller.handleMouseEvent(me);
     //console.log(`MapWidget received mouse event: ${me.type} at (${me.x}, ${me.y})`);
-    return false;
+    // Return true if click was handled to allow event propagation
+    return handled;
   }
 
   public get drawMapFeatureFunctions(): Array<
@@ -73,6 +75,15 @@ export class MapWidget extends SKElement {
 
   public get points(): MapPoint[] {
     return this._model.points;
+  }
+
+  // Set click handler callback
+  public set onPointClick(handler: ((mapPoint: MapPoint) => void) | null) {
+    this._onPointClick = handler;
+  }
+
+  public get onPointClick(): ((mapPoint: MapPoint) => void) | null {
+    return this._onPointClick;
   }
 }
 

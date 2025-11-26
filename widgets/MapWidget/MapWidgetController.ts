@@ -26,8 +26,9 @@ export class MapWidgetController {
     this._model = model;
   }
 
-  handleMouseEvent(me: SKMouseEvent) {
+  handleMouseEvent(me: SKMouseEvent): boolean {
       let hoveredPoint: MapPoint | null = null;
+      let clickHandled = false;
       
       // First pass: find the hovered point and set its dataDisplay
       this._model.points.forEach((p) => {
@@ -67,15 +68,25 @@ export class MapWidgetController {
               }
               else if (me.type === "click")
               {
-                if (
-                  this._map.sendEvent({
-                    source: this,
-                    timeStamp: me.timeStamp,
-                    type: "point-click",
-                    data: p
-                  } as SKEvent)
-                )
-                  return true;
+                // Handle click - use callback if available, otherwise send event
+                console.log(`MapWidgetController: Click detected on point at (${p.latitude}, ${p.longitude})`);
+                
+                // Try callback first (direct handler)
+                if (this._map.onPointClick) {
+                  console.log(`MapWidgetController: Calling onPointClick callback`);
+                  this._map.onPointClick(p);
+                }
+                
+                // Also send event for global listener (backup)
+                const clickEvent = {
+                  source: this,
+                  timeStamp: me.timeStamp,
+                  type: "point-click",
+                  data: p
+                } as SKEvent;
+                this._map.sendEvent(clickEvent);
+                
+                clickHandled = true;
               }
             }
       });
@@ -86,6 +97,9 @@ export class MapWidgetController {
               p.dataDisplay = "";
             }
       });
+      
+      // Return true if click was handled to allow event propagation
+      return clickHandled;
   }
 
   public calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
