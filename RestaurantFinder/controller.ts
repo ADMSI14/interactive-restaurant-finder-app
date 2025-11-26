@@ -67,6 +67,8 @@ export class RestaurantFinderController {
         this._view.updateRatingRange(filterState.minRating, filterState.maxRating);
         this._view.updateRestaurantType(filterState.selectedType);
         this._view.updateFeatures(filterState.selectedFeatures);
+        // Initialize result count
+        this._view.updateResultCount(this._model.filteredRestaurants.length);
     }
 
     // Update view when filters change
@@ -74,6 +76,9 @@ export class RestaurantFinderController {
     public updateView(): void {
         // Update map with filtered restaurants
         this._view.updateMap(this._model.filteredRestaurants);
+        
+        // Update result count for clarity
+        this._view.updateResultCount(this._model.filteredRestaurants.length);
         
         // Check if currently selected restaurant is still in filtered list
         const selectedRestaurant = this._model.selectedRestaurant;

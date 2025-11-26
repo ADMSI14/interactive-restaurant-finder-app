@@ -14,6 +14,7 @@ export class RestaurantFinderView {
     private _ratingMaxLabel: SKLabel | null = null;
     private _typeLabel: SKLabel | null = null;
     private _featuresLabels: Map<string, SKLabel> = new Map();
+    private _resultCountLabel: SKLabel | null = null;
 
     // Layout constants following CRAP principles
     private readonly MARGIN = 20;           // Consistent margin around all elements
@@ -248,6 +249,18 @@ export class RestaurantFinderView {
             featureY += 25;  // Consistent spacing between features
         });
 
+        // Filter panel title for clarity
+        const filterPanelTitle = new SKLabel({
+            text: "Filters",
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING - 18,
+            width: 200,
+            height: 16
+        });
+        filterPanelTitle.font = "bold 14px Arial";
+        filterPanelTitle.fill = "#000000";
+        this._container.addChild(filterPanelTitle);
+        
         // Placeholder text indicating these will be replaced with widgets
         const placeholderNote = new SKLabel({
             text: "(Placeholder - will be replaced with interactive widgets)",
@@ -259,6 +272,18 @@ export class RestaurantFinderView {
         placeholderNote.font = "10px Arial";
         placeholderNote.fill = "#666666";
         this._filtersContainer.addChild(placeholderNote);
+        
+        // Add result count label (will be updated dynamically)
+        this._resultCountLabel = new SKLabel({
+            text: `Showing: 0 restaurants`,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 195,
+            width: 200,
+            height: 16
+        });
+        this._resultCountLabel.font = "11px Arial";
+        this._resultCountLabel.fill = "#333333";
+        this._filtersContainer.addChild(this._resultCountLabel);
     }
 
     // Update cost range display from model
@@ -333,6 +358,13 @@ export class RestaurantFinderView {
         return { x: mapX, y: mapY, width: mapWidth, height: mapHeight };
     }
 
+    // Update result count display
+    public updateResultCount(count: number): void {
+        if (this._resultCountLabel) {
+            this._resultCountLabel.text = `Showing: ${count} restaurant${count !== 1 ? 's' : ''}`;
+        }
+    }
+
     // Update map with filtered restaurants
     public updateMap(restaurants: Restaurant[]): void {
         // Convert restaurants to map points
@@ -359,6 +391,30 @@ export class RestaurantFinderView {
             
             // Add map widget to container
             this._container.addChild(this._mapWidget);
+            
+            // Add map title/label for clarity
+            const mapTitle = new SKLabel({
+                text: "Restaurant Locations",
+                x: mapLayout.x,
+                y: mapLayout.y - 18,
+                width: mapLayout.width,
+                height: 16
+            });
+            mapTitle.font = "bold 14px Arial";
+            mapTitle.fill = "#000000";
+            this._container.addChild(mapTitle);
+            
+            // Add instruction text below map title
+            const mapInstruction = new SKLabel({
+                text: "Hover over markers to see details • Click to select",
+                x: mapLayout.x,
+                y: mapLayout.y - 2,
+                width: mapLayout.width,
+                height: 14
+            });
+            mapInstruction.font = "11px Arial";
+            mapInstruction.fill = "#666666";
+            this._container.addChild(mapInstruction);
         }
     }
 
@@ -393,6 +449,18 @@ export class RestaurantFinderView {
                 border: "#424242"  // Dark gray border for definition
             });
             this._container.addChild(this._detailsContainer);
+            
+            // Add details panel title for clarity
+            const detailsTitle = new SKLabel({
+                text: "Restaurant Details",
+                x: detailsX,
+                y: detailsY - 18,
+                width: this.DETAILS_PANEL_WIDTH,
+                height: 16
+            });
+            detailsTitle.font = "bold 14px Arial";
+            detailsTitle.fill = "#000000";
+            this._container.addChild(detailsTitle);
         }
 
         if (!restaurant) {
