@@ -125,7 +125,7 @@ export class RestaurantFinderView {
         // Cost Range Filter Section - Left side of filter panel
         const costTitle = new SKLabel({
             text: "Cost Range ($):",
-            x: this.FILTER_PANEL_PADDING,
+            x: this.FILTER_PANEL_PADDING + 30,  // Moved inside to match slider
             y: this.FILTER_PANEL_PADDING,
             width: 120,
             height: 20
@@ -141,7 +141,7 @@ export class RestaurantFinderView {
             maxValue: 1000,
             min: 0,
             max: 1000,
-            x: this.FILTER_PANEL_PADDING,
+            x: this.FILTER_PANEL_PADDING + 30,  // Moved inside a bit
             y: this.FILTER_PANEL_PADDING + 25,
             width: 200,
             height: 20,
@@ -155,7 +155,7 @@ export class RestaurantFinderView {
         // Rating Range Filter Section - Below cost range, aligned left
         const ratingTitle = new SKLabel({
             text: "Rating Range:",
-            x: this.FILTER_PANEL_PADDING,
+            x: this.FILTER_PANEL_PADDING + 30,  // Moved inside to match slider
             y: this.FILTER_PANEL_PADDING + 60,
             width: 120,
             height: 20
@@ -171,7 +171,7 @@ export class RestaurantFinderView {
             maxValue: 5,
             min: 0,
             max: 5,
-            x: this.FILTER_PANEL_PADDING,
+            x: this.FILTER_PANEL_PADDING + 30,  // Moved inside a bit
             y: this.FILTER_PANEL_PADDING + 85,
             width: 200,
             height: 20,
