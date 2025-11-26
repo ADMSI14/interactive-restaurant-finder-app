@@ -19,6 +19,7 @@ export class RestaurantFinderView {
     private readonly MARGIN = 20;           // Consistent margin around all elements
     private readonly SECTION_SPACING = 15;   // Spacing between major sections
     private readonly HEADER_HEIGHT = 40;     // Height for header/title area
+    private readonly FILTER_PANEL_PADDING = 10;  // Internal padding for filter panel
     
     constructor() {
         // Create main container with consistent background
@@ -56,21 +57,22 @@ export class RestaurantFinderView {
         const filterY = mapLayout.y + mapLayout.height + this.SECTION_SPACING;
         
         // Create filters container positioned below the map with consistent alignment
+        // Positioned at bottom of available space, aligned with map left edge
         this._filtersContainer = new SKContainer({
-            x: this.MARGIN,  // Aligned with map (CRAP: Alignment)
+            x: this.MARGIN,  // Aligned with map left edge (CRAP: Alignment)
             y: filterY,
-            width: 500,
+            width: 500,  // Same width as map for alignment
             height: 240,
             fill: "#f5f5f5",  // Slightly darker for subtle contrast
             border: "#9e9e9e"  // Medium gray border
         });
         this._container.addChild(this._filtersContainer);
 
-        // Cost Range Filter Section
+        // Cost Range Filter Section - Left side of filter panel
         const costTitle = new SKLabel({
             text: "Cost Range ($):",
-            x: 10,
-            y: 10,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING,
             width: 120,
             height: 20
         });
@@ -78,11 +80,11 @@ export class RestaurantFinderView {
         costTitle.fill = "#000000";
         this._filtersContainer.addChild(costTitle);
 
-        // Min Cost Label
+        // Min Cost Label - Aligned with consistent padding
         const minCostLabel = new SKLabel({
             text: "Min:",
-            x: 10,
-            y: 35,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 25,
             width: 40,
             height: 20
         });
@@ -92,8 +94,8 @@ export class RestaurantFinderView {
         // Min Cost Value (placeholder - will be updated from model)
         this._costMinLabel = new SKLabel({
             text: "0",
-            x: 55,
-            y: 35,
+            x: this.FILTER_PANEL_PADDING + 45,
+            y: this.FILTER_PANEL_PADDING + 25,
             width: 60,
             height: 20
         });
@@ -101,11 +103,11 @@ export class RestaurantFinderView {
         this._costMinLabel.fill = "#333333";
         this._filtersContainer.addChild(this._costMinLabel);
 
-        // Max Cost Label
+        // Max Cost Label - Aligned with min cost label
         const maxCostLabel = new SKLabel({
             text: "Max:",
-            x: 130,
-            y: 35,
+            x: this.FILTER_PANEL_PADDING + 120,
+            y: this.FILTER_PANEL_PADDING + 25,
             width: 40,
             height: 20
         });
@@ -115,8 +117,8 @@ export class RestaurantFinderView {
         // Max Cost Value (placeholder - will be updated from model)
         this._costMaxLabel = new SKLabel({
             text: "1000",
-            x: 175,
-            y: 35,
+            x: this.FILTER_PANEL_PADDING + 165,
+            y: this.FILTER_PANEL_PADDING + 25,
             width: 60,
             height: 20
         });
@@ -124,11 +126,11 @@ export class RestaurantFinderView {
         this._costMaxLabel.fill = "#333333";
         this._filtersContainer.addChild(this._costMaxLabel);
 
-        // Rating Range Filter Section
+        // Rating Range Filter Section - Below cost range, aligned left
         const ratingTitle = new SKLabel({
             text: "Rating Range:",
-            x: 10,
-            y: 85,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 60,
             width: 120,
             height: 20
         });
@@ -136,11 +138,11 @@ export class RestaurantFinderView {
         ratingTitle.fill = "#000000";
         this._filtersContainer.addChild(ratingTitle);
 
-        // Min Rating Label
+        // Min Rating Label - Aligned with cost labels
         const minRatingLabel = new SKLabel({
             text: "Min:",
-            x: 10,
-            y: 110,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 85,
             width: 40,
             height: 20
         });
@@ -150,8 +152,8 @@ export class RestaurantFinderView {
         // Min Rating Value (placeholder - will be updated from model)
         this._ratingMinLabel = new SKLabel({
             text: "0.0",
-            x: 55,
-            y: 110,
+            x: this.FILTER_PANEL_PADDING + 45,
+            y: this.FILTER_PANEL_PADDING + 85,
             width: 60,
             height: 20
         });
@@ -159,11 +161,11 @@ export class RestaurantFinderView {
         this._ratingMinLabel.fill = "#333333";
         this._filtersContainer.addChild(this._ratingMinLabel);
 
-        // Max Rating Label
+        // Max Rating Label - Aligned with cost labels
         const maxRatingLabel = new SKLabel({
             text: "Max:",
-            x: 130,
-            y: 110,
+            x: this.FILTER_PANEL_PADDING + 120,
+            y: this.FILTER_PANEL_PADDING + 85,
             width: 40,
             height: 20
         });
@@ -173,8 +175,8 @@ export class RestaurantFinderView {
         // Max Rating Value (placeholder - will be updated from model)
         this._ratingMaxLabel = new SKLabel({
             text: "5.0",
-            x: 175,
-            y: 110,
+            x: this.FILTER_PANEL_PADDING + 165,
+            y: this.FILTER_PANEL_PADDING + 85,
             width: 60,
             height: 20
         });
@@ -182,11 +184,11 @@ export class RestaurantFinderView {
         this._ratingMaxLabel.fill = "#333333";
         this._filtersContainer.addChild(this._ratingMaxLabel);
 
-        // Restaurant Type Filter Section
+        // Restaurant Type Filter Section - Below rating range, aligned left
         const typeTitle = new SKLabel({
             text: "Restaurant Type:",
-            x: 10,
-            y: 160,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 120,
             width: 120,
             height: 20
         });
@@ -197,8 +199,8 @@ export class RestaurantFinderView {
         // Type Selection Label (placeholder - will be replaced with radio buttons)
         this._typeLabel = new SKLabel({
             text: "All Types",
-            x: 10,
-            y: 185,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 145,
             width: 200,
             height: 20
         });
@@ -206,11 +208,11 @@ export class RestaurantFinderView {
         this._typeLabel.fill = "#333333";
         this._filtersContainer.addChild(this._typeLabel);
 
-        // Features Filter Section
+        // Features Filter Section - Right side of filter panel (CRAP: Proximity - grouped separately)
         const featuresTitle = new SKLabel({
             text: "Features:",
-            x: 250,
-            y: 10,
+            x: 250,  // Right side of panel
+            y: this.FILTER_PANEL_PADDING,
             width: 100,
             height: 20
         });
@@ -219,6 +221,7 @@ export class RestaurantFinderView {
         this._filtersContainer.addChild(featuresTitle);
 
         // Feature checkboxes (placeholder - will be replaced with actual checkboxes)
+        // Positioned on right side, aligned vertically
         const features = [
             "free parking",
             "pets allowed",
@@ -226,12 +229,12 @@ export class RestaurantFinderView {
             "gluten free options"
         ];
 
-        let featureY = 35;
+        let featureY = this.FILTER_PANEL_PADDING + 25;
         features.forEach((feature) => {
-            // Feature label with checkbox indicator
+            // Feature label with checkbox indicator - Right side alignment
             const featureLabel = new SKLabel({
                 text: `[ ] ${feature}`,
-                x: 250,
+                x: 250,  // Right side of panel
                 y: featureY,
                 width: 200,
                 height: 20
@@ -240,14 +243,14 @@ export class RestaurantFinderView {
             featureLabel.fill = "#333333";
             this._filtersContainer.addChild(featureLabel);
             this._featuresLabels.set(feature, featureLabel);
-            featureY += 25;
+            featureY += 25;  // Consistent spacing between features
         });
 
         // Placeholder text indicating these will be replaced with widgets
         const placeholderNote = new SKLabel({
             text: "(Placeholder - will be replaced with interactive widgets)",
-            x: 10,
-            y: 135,
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 170,
             width: 350,
             height: 15
         });
