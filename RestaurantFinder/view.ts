@@ -115,8 +115,8 @@ export class RestaurantFinderView {
         this._filtersContainer = new SKContainer({
             x: this.MARGIN,  // Aligned with map left edge (CRAP: Alignment)
             y: filterY,
-            width: 500,  // Same width as map for alignment
-            height: 240,
+            width: 1238,  // spans the width of the screen - right container 
+            height: 145,  // reduced height to fit the screen
             fill: this.COLORS.PANEL_BG,  // Consistent panel background
             border: this.COLORS.SECONDARY_BORDER  // Consistent border color
         });
