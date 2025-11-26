@@ -504,15 +504,11 @@ export class RestaurantFinderView {
     private getMapLayout(): { x: number; y: number; width: number; height: number } {
         const mapX = this.MARGIN;
         const mapY = this.MARGIN + this.HEADER_HEIGHT + this.SECTION_SPACING;
-        const mapWidth = 500;
-        // Calculate map height to ensure filters fit below within 600px container
-        // Layout calculation: header(40) + margin(20) + spacing(15) + map + spacing(15) + filters(240) <= 600
-        // Available for map: 600 - 40 - 20 - 15 - 15 - 240 = 270
-        // Use 300px for better visibility while ensuring filters fit
-        // Actual: 40 + 20 + 15 + 300 + 15 + 240 = 630 (slightly over, but acceptable for visual balance)
-        // Alternative: reduce to 280 for exact fit: 40 + 20 + 15 + 280 + 15 + 240 = 610 (still over)
-        // Best balance: 270px map height for exact fit
-        const mapHeight = 270; // Balanced size that ensures filters fit below
+        // Map height matches details container height for visual balance
+        const mapHeight = 439; // Same height as details container
+        // Calculate proportional width: original ratio was 500/270 = 1.85185
+        // New width = 439 * (500/270) = 813px (maintains aspect ratio)
+        const mapWidth = Math.round(439 * (500 / 270)); // Proportionally scaled width
         return { x: mapX, y: mapY, width: mapWidth, height: mapHeight };
     }
 
