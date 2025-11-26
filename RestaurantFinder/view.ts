@@ -16,6 +16,7 @@ export class RestaurantFinderView {
     private _ratingRangeSlider: RangeSlider | null = null;
     private _typeRadioGroup: RadioButtonGroup | null = null;
     private _typeRadioButtons: Map<string, RadioButton> = new Map();
+    private _typeLabels: Map<string, SKLabel> = new Map();
     private _featureCheckboxes: Map<string, CheckBox> = new Map();
     private _resultCountLabel: SKLabel | null = null;
     
@@ -181,52 +182,7 @@ export class RestaurantFinderView {
         // Event listener will be set up in controller using global event listener
         this._filtersContainer.addChild(this._ratingRangeSlider);
 
-        // Restaurant Type Filter Section - Below rating range, aligned left
-        const typeTitle = new SKLabel({
-            text: "Restaurant Type:",
-            x: this.FILTER_PANEL_PADDING,
-            y: this.FILTER_PANEL_PADDING + 120,
-            width: 120,
-            height: 20
-        });
-        typeTitle.font = this.FONTS.FILTER_TITLE;
-        typeTitle.fill = "";  // No background fill
-        typeTitle.fontColour = this.COLORS.PRIMARY_TEXT;
-        this._filtersContainer.addChild(typeTitle);
-
-        // Restaurant Type Radio Buttons - Interactive widget for selecting type
-        // Radio buttons will be created dynamically based on available types
-        // Create a group for exclusivity
-        this._typeRadioGroup = new RadioButtonGroup();
-        
-        // "All Types" radio button (null selection)
-        const allTypesRadio = new RadioButton({
-            selected: true,  // Default selection
-            x: this.FILTER_PANEL_PADDING,
-            y: this.FILTER_PANEL_PADDING + 145,
-            width: 20,
-            height: 20
-        });
-        // Event listener will be set up in controller using global event listener
-        this._typeRadioGroup.addRadioButton(allTypesRadio);
-        this._filtersContainer.addChild(allTypesRadio);
-        
-        // "All Types" label
-        const allTypesLabel = new SKLabel({
-            text: "All Types",
-            x: this.FILTER_PANEL_PADDING + 25,
-            y: this.FILTER_PANEL_PADDING + 145,
-            width: 100,
-            height: 20
-        });
-        allTypesLabel.font = this.FONTS.BODY;
-        allTypesLabel.fill = "";  // No background fill
-        allTypesLabel.fontColour = this.COLORS.SECONDARY_TEXT;
-        if (this._filtersContainer) {
-            this._filtersContainer.addChild(allTypesLabel);
-        }
-        
-        // Note: Additional type radio buttons will be added dynamically via updateRestaurantType method
+        // Note: Restaurant Type section has been moved to the right-side container
 
         // Features Filter Section - Right side of filter panel (CRAP: Proximity - grouped separately)
         const featuresTitle = new SKLabel({
@@ -365,51 +321,58 @@ export class RestaurantFinderView {
     
     // Initialize restaurant type radio buttons based on available types
     public initializeTypeRadioButtons(availableTypes: string[]): void {
-        if (!this._typeRadioGroup || !this._filtersContainer) return;
+        // Ensure right-side container exists (it's created with details container)
+        this.ensureRightSideContainer();
+        
+        if (!this._typeRadioGroup || !this._rightSideContainer) return;
         
         // Clear existing type radio buttons (except "All Types")
-        this._typeRadioButtons.forEach((radio) => {
+        this._typeRadioButtons.forEach((radio, typeName) => {
             this._typeRadioGroup!.removeRadioButton(radio);
-            this._filtersContainer!.removeChild(radio);
+            this._rightSideContainer!.removeChild(radio);
+            // Remove associated label
+            const label = this._typeLabels.get(typeName);
+            if (label && this._rightSideContainer) {
+                this._rightSideContainer.removeChild(label);
+            }
         });
         this._typeRadioButtons.clear();
+        this._typeLabels.clear();
         
-        // Calculate required height for filter panel based on number of types
-        // Base elements: cost slider (25px), rating slider (60px), type title (120px)
-        // Each type button takes 25px vertical space
-        // Starting position for types: FILTER_PANEL_PADDING + 145 = 155
-        // Need: 155 + (availableTypes.length + 1) * 25 + 25 for result count
-        const typeStartY = this.FILTER_PANEL_PADDING + 145;
-        const lastTypeY = typeStartY + (availableTypes.length + 1) * 25; // +1 for "All Types"
-        const resultCountY = lastTypeY + 10; // 10px spacing after last type
-        const requiredHeight = resultCountY + 20; // +20 for result count label height and padding
+        // Calculate equal spacing for all radio buttons (including "All Types")
+        // Total number of options: 1 ("All Types") + availableTypes.length
+        const totalOptions = 1 + availableTypes.length;
+        const containerHeight = this._rightSideContainer.height || 590;
+        const titleHeight = 20; // Height of "Restaurant Type:" title
+        const topPadding = this.FILTER_PANEL_PADDING;
+        const bottomPadding = this.FILTER_PANEL_PADDING;
         
-        // Update filter container height if needed
-        const filtersContainer = this._filtersContainer;
-        if (filtersContainer) {
-            const currentHeight = filtersContainer.height || 240;
-            if (requiredHeight > currentHeight) {
-                filtersContainer.height = requiredHeight;
-                
-                // Update main container height if filter panel extends beyond it
-                const filterPanelBottom = filtersContainer.y + requiredHeight;
-                const containerBottom = this._container.height || 600;
-                if (filterPanelBottom > containerBottom) {
-                    // Add some padding at the bottom
-                    this._container.height = filterPanelBottom + this.MARGIN;
-                }
+        // Available height for radio buttons = container height - title height - top padding - bottom padding
+        const availableHeight = containerHeight - titleHeight - topPadding - bottomPadding;
+        
+        // Calculate spacing between radio buttons (equal division of available height)
+        const spacing = availableHeight / totalOptions;
+        
+        // Update "All Types" position to be evenly spaced (first option, index 0)
+        const allTypesRadio = this._typeRadioGroup.radioButtons[0];
+        if (allTypesRadio) {
+            // Center the radio button in its allocated slot
+            const allTypesY = topPadding + titleHeight + (spacing / 2) - 10; // -10 to center 20px high button
+            allTypesRadio.y = allTypesY;
+            // Update "All Types" label position - find it in the container
+            const allTypesLabel = this._rightSideContainer.children.find(
+                (child): child is SKLabel => child instanceof SKLabel && child.text === "All Types"
+            );
+            if (allTypesLabel) {
+                allTypesLabel.y = allTypesY;
             }
         }
         
-        // Update result count label position to be after all type buttons
-        if (this._resultCountLabel && this._filtersContainer) {
-            this._resultCountLabel.y = resultCountY;
-        }
-        
-        // Create radio buttons for each available type
-        let typeY = this.FILTER_PANEL_PADDING + 145;
+        // Create radio buttons for each available type, evenly distributed
         availableTypes.forEach((typeName, index) => {
-            typeY = this.FILTER_PANEL_PADDING + 145 + (index + 1) * 25;
+            // Position: evenly space all options (index + 1 because "All Types" is at index 0)
+            // Center each radio button in its allocated slot
+            const typeY = topPadding + titleHeight + ((index + 1) * spacing) + (spacing / 2) - 10;
             
             const typeRadio = new RadioButton({
                 selected: false,
@@ -423,8 +386,8 @@ export class RestaurantFinderView {
                 this._typeRadioGroup.addRadioButton(typeRadio);
             }
             this._typeRadioButtons.set(typeName, typeRadio);
-            if (this._filtersContainer) {
-                this._filtersContainer.addChild(typeRadio);
+            if (this._rightSideContainer) {
+                this._rightSideContainer.addChild(typeRadio);
             }
             
             // Type label
@@ -432,14 +395,15 @@ export class RestaurantFinderView {
                 text: typeName,
                 x: this.FILTER_PANEL_PADDING + 25,
                 y: typeY,
-                width: 150,
+                width: 200,
                 height: 20
             });
             typeLabel.font = this.FONTS.BODY;
             typeLabel.fill = "";  // No background fill
             typeLabel.fontColour = this.COLORS.SECONDARY_TEXT;
-            if (this._filtersContainer) {
-                this._filtersContainer.addChild(typeLabel);
+            this._typeLabels.set(typeName, typeLabel);
+            if (this._rightSideContainer) {
+                this._rightSideContainer.addChild(typeLabel);
             }
         });
     }
@@ -580,6 +544,103 @@ export class RestaurantFinderView {
         return this._mapWidget;
     }
 
+    // Ensure right-side container exists (creates it if needed)
+    private ensureRightSideContainer(): void {
+        if (this._rightSideContainer) return;  // Already exists
+        
+        // Create details container first if it doesn't exist
+        if (!this._detailsContainer) {
+            const mapLayout = this.getMapLayout();
+            const detailsX = mapLayout.x + mapLayout.width + this.SECTION_SPACING;
+            const detailsY = mapLayout.y;
+            
+            this._detailsContainer = new SKContainer({
+                x: detailsX,
+                y: detailsY,
+                width: this.DETAILS_PANEL_WIDTH,
+                height: 439,
+                fill: this.COLORS.DETAILS_BG,
+                border: this.COLORS.PRIMARY_BORDER
+            });
+            this._container.addChild(this._detailsContainer);
+            
+            // Add details panel title
+            const detailsTitle = new SKLabel({
+                text: "Restaurant Details",
+                x: detailsX,
+                y: detailsY - 18,
+                width: this.DETAILS_PANEL_WIDTH,
+                height: 16
+            });
+            detailsTitle.font = this.FONTS.SECTION_TITLE;
+            detailsTitle.fill = "";
+            detailsTitle.fontColour = this.COLORS.PRIMARY_TEXT;
+            this._container.addChild(detailsTitle);
+        }
+        
+        // Now create right-side container
+        const mapLayout = this.getMapLayout();
+        const detailsX = mapLayout.x + mapLayout.width + this.SECTION_SPACING;
+        const detailsY = mapLayout.y;
+        const rightSideX = detailsX + this.DETAILS_PANEL_WIDTH + this.SECTION_SPACING;
+        const rightSideY = detailsY;
+        const rightSideWidth = 250;
+        const rightSideHeight = 590;
+        
+        this._rightSideContainer = new SKContainer({
+            x: rightSideX,
+            y: rightSideY,
+            width: rightSideWidth,
+            height: rightSideHeight,
+            fill: this.COLORS.PANEL_BG,
+            border: this.COLORS.SECONDARY_BORDER
+        });
+        this._container.addChild(this._rightSideContainer);
+        
+        // Restaurant Type Filter Section - Moved to right-side container
+        const typeTitle = new SKLabel({
+            text: "Restaurant Type:",
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING,
+            width: 200,
+            height: 20
+        });
+        typeTitle.font = this.FONTS.FILTER_TITLE;
+        typeTitle.fill = "";
+        typeTitle.fontColour = this.COLORS.PRIMARY_TEXT;
+        this._rightSideContainer.addChild(typeTitle);
+
+        // Restaurant Type Radio Buttons - Interactive widget for selecting type
+        // Radio buttons will be created dynamically based on available types
+        // Create a group for exclusivity
+        this._typeRadioGroup = new RadioButtonGroup();
+        
+        // "All Types" radio button (null selection)
+        const allTypesRadio = new RadioButton({
+            selected: true,  // Default selection
+            x: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 25,
+            width: 20,
+            height: 20
+        });
+        // Event listener will be set up in controller using global event listener
+        this._typeRadioGroup.addRadioButton(allTypesRadio);
+        this._rightSideContainer.addChild(allTypesRadio);
+        
+        // "All Types" label
+        const allTypesLabel = new SKLabel({
+            text: "All Types",
+            x: this.FILTER_PANEL_PADDING + 25,
+            y: this.FILTER_PANEL_PADDING + 25,
+            width: 200,
+            height: 20
+        });
+        allTypesLabel.font = this.FONTS.BODY;
+        allTypesLabel.fill = "";
+        allTypesLabel.fontColour = this.COLORS.SECONDARY_TEXT;
+        this._rightSideContainer.addChild(allTypesLabel);
+    }
+
     // Update restaurant details display
     // Applies CRAP design principles: Contrast, Repetition, Alignment, Proximity
     public updateRestaurantDetails(restaurant: Restaurant | null): void {
@@ -592,56 +653,16 @@ export class RestaurantFinderView {
             });
             this._detailsLabels = [];
         } else {
-            // Create details container if it doesn't exist
-            // Positioned to the right of map with consistent spacing (CRAP: Alignment, Proximity)
-            // Use getMapLayout() for consistency - aligned with map top and height
-            const mapLayout = this.getMapLayout();
-            const detailsX = mapLayout.x + mapLayout.width + this.SECTION_SPACING;
-            const detailsY = mapLayout.y;  // Aligned with map top (CRAP: Alignment)
-            
-            // Set details container height to fixed value
-            this._detailsContainer = new SKContainer({
-                x: detailsX,
-                y: detailsY,
-                width: this.DETAILS_PANEL_WIDTH,  // Consistent width
-                height: 439,  // Fixed height
-                fill: this.COLORS.DETAILS_BG,  // Consistent details background
-                border: this.COLORS.PRIMARY_BORDER  // Consistent details border
-            });
-            this._container.addChild(this._detailsContainer);
-            
-            // Add details panel title for clarity
-            const detailsTitle = new SKLabel({
-                text: "Restaurant Details",
-                x: detailsX,
-                y: detailsY - 18,
-                width: this.DETAILS_PANEL_WIDTH,
-                height: 16
-            });
-            detailsTitle.font = this.FONTS.SECTION_TITLE;
-            detailsTitle.fill = "";  // No background fill
-            detailsTitle.fontColour = this.COLORS.PRIMARY_TEXT;
-            this._container.addChild(detailsTitle);
-            
-            // Create right side container to fill white space beside details container
-            const rightSideX = detailsX + this.DETAILS_PANEL_WIDTH + this.SECTION_SPACING;
-            const rightSideY = detailsY;  // Aligned with details container top
-            const rightSideWidth = 250;  // Fixed width as requested
-            const rightSideHeight = 590;  // Fixed height as requested
-            
-            this._rightSideContainer = new SKContainer({
-                x: rightSideX,
-                y: rightSideY,
-                width: rightSideWidth,
-                height: rightSideHeight,
-                fill: this.COLORS.PANEL_BG,  // Same background as filters panel
-                border: this.COLORS.SECONDARY_BORDER  // Consistent border (same as filters container)
-            });
-            this._container.addChild(this._rightSideContainer);
+            // Ensure containers exist (creates them if needed)
+            this.ensureRightSideContainer();
         }
 
         if (!restaurant) {
             console.log("updateRestaurantDetails: restaurant is null, showing placeholder");
+            // Ensure containers exist
+            this.ensureRightSideContainer();
+            if (!this._detailsContainer) return;
+            
             // Show placeholder when no restaurant is selected
             // Positioned with consistent padding (CRAP: Alignment)
             const placeholder = new SKLabel({
@@ -658,6 +679,10 @@ export class RestaurantFinderView {
             this._detailsLabels.push(placeholder);
             return;
         }
+        
+        // Ensure containers exist
+        this.ensureRightSideContainer();
+        if (!this._detailsContainer) return;
         
         console.log("updateRestaurantDetails: Creating labels for restaurant:", restaurant.name);
 
