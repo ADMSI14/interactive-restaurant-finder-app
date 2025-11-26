@@ -24,6 +24,41 @@ export class RestaurantFinderView {
     private readonly DETAILS_PANEL_WIDTH = 240;  // Width of details panel
     private readonly DETAILS_PANEL_PADDING = 15;  // Internal padding for details panel
     
+    // Style constants for consistent styling (CRAP: Repetition)
+    private readonly COLORS = {
+        // Text colors
+        PRIMARY_TEXT: "#000000",        // Black for headings and important text
+        SECONDARY_TEXT: "#333333",      // Dark gray for body text
+        MUTED_TEXT: "#666666",          // Medium gray for secondary/placeholder text
+        SUCCESS: "#006600",              // Green for positive states (selected features)
+        
+        // Background colors
+        MAIN_BG: "#ffffff",              // White for main container
+        PANEL_BG: "#f5f5f5",            // Light gray for filter panel
+        DETAILS_BG: "#fafafa",           // Very light gray for details panel
+        MAP_BG: "#e8f5e9",              // Light green for map background
+        
+        // Border colors
+        PRIMARY_BORDER: "#424242",       // Dark gray for details panel
+        SECONDARY_BORDER: "#9e9e9e",     // Medium gray for filter panel
+        MAP_BORDER: "#2e7d32"            // Dark green for map border
+    };
+    
+    private readonly FONTS = {
+        HEADER: "bold 24px Arial",       // Main application title
+        SECTION_TITLE: "bold 14px Arial", // Section titles (Map, Filters, Details)
+        FILTER_TITLE: "bold 12px Arial", // Filter section titles
+        BODY: "12px Arial",               // Regular body text
+        SMALL: "11px Arial",              // Small text (instructions, counts)
+        TINY: "10px Arial"                // Tiny text (placeholders, notes)
+    };
+    
+    private readonly SPACING = {
+        ITEM: 8,          // Spacing between items in a section
+        SECTION: 15,      // Spacing between major sections
+        LARGE_SECTION: 25 // Larger spacing for visual separation
+    };
+    
     constructor() {
         // Create main container with consistent background
         this._container = new SKContainer({
@@ -31,7 +66,7 @@ export class RestaurantFinderView {
             y: 0,
             width: 800,
             height: 600,
-            fill: "#ffffff",  // White background for contrast
+            fill: this.COLORS.MAIN_BG,  // Consistent background color
         });
         this.createHeader();
         this.createFiltersPanel();
@@ -46,8 +81,8 @@ export class RestaurantFinderView {
             width: 760,
             height: this.HEADER_HEIGHT
         });
-        header.font = "bold 24px Arial";
-        header.fill = "#000000";
+        header.font = this.FONTS.HEADER;
+        header.fill = this.COLORS.PRIMARY_TEXT;
         this._container.addChild(header);
     }
 
@@ -66,8 +101,8 @@ export class RestaurantFinderView {
             y: filterY,
             width: 500,  // Same width as map for alignment
             height: 240,
-            fill: "#f5f5f5",  // Slightly darker for subtle contrast
-            border: "#9e9e9e"  // Medium gray border
+            fill: this.COLORS.PANEL_BG,  // Consistent panel background
+            border: this.COLORS.SECONDARY_BORDER  // Consistent border color
         });
         this._container.addChild(this._filtersContainer);
 
@@ -79,8 +114,8 @@ export class RestaurantFinderView {
             width: 120,
             height: 20
         });
-        costTitle.font = "bold 12px Arial";
-        costTitle.fill = "#000000";
+        costTitle.font = this.FONTS.FILTER_TITLE;
+        costTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(costTitle);
 
         // Min Cost Label - Aligned with consistent padding
@@ -91,7 +126,7 @@ export class RestaurantFinderView {
             width: 40,
             height: 20
         });
-        minCostLabel.font = "12px Arial";
+        minCostLabel.font = this.FONTS.BODY;
         this._filtersContainer.addChild(minCostLabel);
 
         // Min Cost Value (placeholder - will be updated from model)
@@ -102,8 +137,8 @@ export class RestaurantFinderView {
             width: 60,
             height: 20
         });
-        this._costMinLabel.font = "12px Arial";
-        this._costMinLabel.fill = "#333333";
+        this._costMinLabel.font = this.FONTS.BODY;
+        this._costMinLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._costMinLabel);
 
         // Max Cost Label - Aligned with min cost label
@@ -114,7 +149,7 @@ export class RestaurantFinderView {
             width: 40,
             height: 20
         });
-        maxCostLabel.font = "12px Arial";
+        maxCostLabel.font = this.FONTS.BODY;
         this._filtersContainer.addChild(maxCostLabel);
 
         // Max Cost Value (placeholder - will be updated from model)
@@ -125,8 +160,8 @@ export class RestaurantFinderView {
             width: 60,
             height: 20
         });
-        this._costMaxLabel.font = "12px Arial";
-        this._costMaxLabel.fill = "#333333";
+        this._costMaxLabel.font = this.FONTS.BODY;
+        this._costMaxLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._costMaxLabel);
 
         // Rating Range Filter Section - Below cost range, aligned left
@@ -137,8 +172,8 @@ export class RestaurantFinderView {
             width: 120,
             height: 20
         });
-        ratingTitle.font = "bold 12px Arial";
-        ratingTitle.fill = "#000000";
+        ratingTitle.font = this.FONTS.FILTER_TITLE;
+        ratingTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(ratingTitle);
 
         // Min Rating Label - Aligned with cost labels
@@ -149,7 +184,7 @@ export class RestaurantFinderView {
             width: 40,
             height: 20
         });
-        minRatingLabel.font = "12px Arial";
+        minRatingLabel.font = this.FONTS.BODY;
         this._filtersContainer.addChild(minRatingLabel);
 
         // Min Rating Value (placeholder - will be updated from model)
@@ -160,8 +195,8 @@ export class RestaurantFinderView {
             width: 60,
             height: 20
         });
-        this._ratingMinLabel.font = "12px Arial";
-        this._ratingMinLabel.fill = "#333333";
+        this._ratingMinLabel.font = this.FONTS.BODY;
+        this._ratingMinLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._ratingMinLabel);
 
         // Max Rating Label - Aligned with cost labels
@@ -172,7 +207,7 @@ export class RestaurantFinderView {
             width: 40,
             height: 20
         });
-        maxRatingLabel.font = "12px Arial";
+        maxRatingLabel.font = this.FONTS.BODY;
         this._filtersContainer.addChild(maxRatingLabel);
 
         // Max Rating Value (placeholder - will be updated from model)
@@ -183,8 +218,8 @@ export class RestaurantFinderView {
             width: 60,
             height: 20
         });
-        this._ratingMaxLabel.font = "12px Arial";
-        this._ratingMaxLabel.fill = "#333333";
+        this._ratingMaxLabel.font = this.FONTS.BODY;
+        this._ratingMaxLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._ratingMaxLabel);
 
         // Restaurant Type Filter Section - Below rating range, aligned left
@@ -195,8 +230,8 @@ export class RestaurantFinderView {
             width: 120,
             height: 20
         });
-        typeTitle.font = "bold 12px Arial";
-        typeTitle.fill = "#000000";
+        typeTitle.font = this.FONTS.FILTER_TITLE;
+        typeTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(typeTitle);
 
         // Type Selection Label (placeholder - will be replaced with radio buttons)
@@ -207,8 +242,8 @@ export class RestaurantFinderView {
             width: 200,
             height: 20
         });
-        this._typeLabel.font = "12px Arial";
-        this._typeLabel.fill = "#333333";
+        this._typeLabel.font = this.FONTS.BODY;
+        this._typeLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._typeLabel);
 
         // Features Filter Section - Right side of filter panel (CRAP: Proximity - grouped separately)
@@ -219,8 +254,8 @@ export class RestaurantFinderView {
             width: 100,
             height: 20
         });
-        featuresTitle.font = "bold 12px Arial";
-        featuresTitle.fill = "#000000";
+        featuresTitle.font = this.FONTS.FILTER_TITLE;
+        featuresTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._filtersContainer.addChild(featuresTitle);
 
         // Feature checkboxes (placeholder - will be replaced with actual checkboxes)
@@ -242,8 +277,8 @@ export class RestaurantFinderView {
                 width: 200,
                 height: 20
             });
-            featureLabel.font = "12px Arial";
-            featureLabel.fill = "#333333";
+            featureLabel.font = this.FONTS.BODY;
+            featureLabel.fill = this.COLORS.SECONDARY_TEXT;
             this._filtersContainer.addChild(featureLabel);
             this._featuresLabels.set(feature, featureLabel);
             featureY += 25;  // Consistent spacing between features
@@ -257,8 +292,8 @@ export class RestaurantFinderView {
             width: 200,
             height: 16
         });
-        filterPanelTitle.font = "bold 14px Arial";
-        filterPanelTitle.fill = "#000000";
+        filterPanelTitle.font = this.FONTS.SECTION_TITLE;
+        filterPanelTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._container.addChild(filterPanelTitle);
         
         // Placeholder text indicating these will be replaced with widgets
@@ -269,8 +304,8 @@ export class RestaurantFinderView {
             width: 350,
             height: 15
         });
-        placeholderNote.font = "10px Arial";
-        placeholderNote.fill = "#666666";
+        placeholderNote.font = this.FONTS.TINY;
+        placeholderNote.fill = this.COLORS.MUTED_TEXT;
         this._filtersContainer.addChild(placeholderNote);
         
         // Add result count label (will be updated dynamically)
@@ -281,8 +316,8 @@ export class RestaurantFinderView {
             width: 200,
             height: 16
         });
-        this._resultCountLabel.font = "11px Arial";
-        this._resultCountLabel.fill = "#333333";
+        this._resultCountLabel.font = this.FONTS.SMALL;
+        this._resultCountLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._resultCountLabel);
     }
 
@@ -319,7 +354,7 @@ export class RestaurantFinderView {
         this._featuresLabels.forEach((label, feature) => {
             const isSelected = selectedFeatures.includes(feature);
             label.text = isSelected ? `[✓] ${feature}` : `[ ] ${feature}`;
-            label.fill = isSelected ? "#006600" : "#333333";
+            label.fill = isSelected ? this.COLORS.SUCCESS : this.COLORS.SECONDARY_TEXT;
         });
     }
 
@@ -385,8 +420,8 @@ export class RestaurantFinderView {
                 y: mapLayout.y,
                 width: mapLayout.width,
                 height: mapLayout.height,
-                fill: "#e8f5e9",  // Light green background (softer than before)
-                border: "#2e7d32"  // Dark green border for contrast
+                fill: this.COLORS.MAP_BG,  // Consistent map background
+                border: this.COLORS.MAP_BORDER  // Consistent map border
             });
             
             // Add map widget to container
@@ -400,8 +435,8 @@ export class RestaurantFinderView {
                 width: mapLayout.width,
                 height: 16
             });
-            mapTitle.font = "bold 14px Arial";
-            mapTitle.fill = "#000000";
+            mapTitle.font = this.FONTS.SECTION_TITLE;
+            mapTitle.fill = this.COLORS.PRIMARY_TEXT;
             this._container.addChild(mapTitle);
             
             // Add instruction text below map title
@@ -412,8 +447,8 @@ export class RestaurantFinderView {
                 width: mapLayout.width,
                 height: 14
             });
-            mapInstruction.font = "11px Arial";
-            mapInstruction.fill = "#666666";
+            mapInstruction.font = this.FONTS.SMALL;
+            mapInstruction.fill = this.COLORS.MUTED_TEXT;
             this._container.addChild(mapInstruction);
         }
     }
@@ -445,8 +480,8 @@ export class RestaurantFinderView {
                 y: detailsY,
                 width: this.DETAILS_PANEL_WIDTH,  // Consistent width
                 height: mapLayout.height,  // Same height as map for alignment
-                fill: "#fafafa",  // Very light gray for subtle contrast
-                border: "#424242"  // Dark gray border for definition
+                fill: this.COLORS.DETAILS_BG,  // Consistent details background
+                border: this.COLORS.PRIMARY_BORDER  // Consistent details border
             });
             this._container.addChild(this._detailsContainer);
             
@@ -458,8 +493,8 @@ export class RestaurantFinderView {
                 width: this.DETAILS_PANEL_WIDTH,
                 height: 16
             });
-            detailsTitle.font = "bold 14px Arial";
-            detailsTitle.fill = "#000000";
+            detailsTitle.font = this.FONTS.SECTION_TITLE;
+            detailsTitle.fill = this.COLORS.PRIMARY_TEXT;
             this._container.addChild(detailsTitle);
         }
 
@@ -473,8 +508,8 @@ export class RestaurantFinderView {
                 width: this.DETAILS_PANEL_WIDTH - (this.DETAILS_PANEL_PADDING * 2),
                 height: 40
             });
-            placeholder.font = "12px Arial";
-            placeholder.fill = "#666666"; // Muted color for placeholder
+            placeholder.font = this.FONTS.BODY;
+            placeholder.fill = this.COLORS.MUTED_TEXT; // Consistent muted color
             this._detailsContainer.addChild(placeholder);
             this._detailsLabels.push(placeholder);
             return;
@@ -485,8 +520,8 @@ export class RestaurantFinderView {
         const leftMargin = this.DETAILS_PANEL_PADDING;        // Consistent left alignment
         const topMargin = this.DETAILS_PANEL_PADDING;          // Consistent top margin
         const labelWidth = this.DETAILS_PANEL_WIDTH - (this.DETAILS_PANEL_PADDING * 2);  // Consistent width for alignment
-        const sectionSpacing = 15;     // Spacing between sections (Proximity)
-        const itemSpacing = 8;         // Spacing between items (Proximity)
+        const sectionSpacing = this.SPACING.SECTION;     // Spacing between sections (Proximity)
+        const itemSpacing = this.SPACING.ITEM;         // Spacing between items (Proximity)
         const lineHeight = 20;         // Consistent line height (Repetition)
         
         let yOffset = topMargin;
@@ -499,8 +534,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: 24
         });
-        nameLabel.font = "bold 18px Arial";
-        nameLabel.fill = "#000000"; // Strong contrast for heading
+        nameLabel.font = "bold 18px Arial";  // Restaurant name - larger than section titles
+        nameLabel.fill = this.COLORS.PRIMARY_TEXT; // Strong contrast for heading
         this._detailsContainer.addChild(nameLabel);
         this._detailsLabels.push(nameLabel);
         yOffset += 28; // Extra space after heading (Proximity)
@@ -514,8 +549,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        typeLabel.font = "12px Arial";
-        typeLabel.fill = "#333333";
+        typeLabel.font = this.FONTS.BODY;
+        typeLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(typeLabel);
         this._detailsLabels.push(typeLabel);
         yOffset += lineHeight + itemSpacing;
@@ -528,8 +563,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        costLabel.font = "12px Arial";
-        costLabel.fill = "#333333";
+        costLabel.font = this.FONTS.BODY;
+        costLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(costLabel);
         this._detailsLabels.push(costLabel);
         yOffset += lineHeight + itemSpacing;
@@ -542,8 +577,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        ratingLabel.font = "12px Arial";
-        ratingLabel.fill = "#333333";
+        ratingLabel.font = this.FONTS.BODY;
+        ratingLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(ratingLabel);
         this._detailsLabels.push(ratingLabel);
         yOffset += lineHeight + sectionSpacing;
@@ -556,8 +591,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        featuresTitle.font = "bold 13px Arial";
-        featuresTitle.fill = "#000000"; // Bold for section heading (Contrast)
+        featuresTitle.font = "bold 13px Arial";  // Slightly larger than filter titles
+        featuresTitle.fill = this.COLORS.PRIMARY_TEXT; // Bold for section heading (Contrast)
         this._detailsContainer.addChild(featuresTitle);
         this._detailsLabels.push(featuresTitle);
         yOffset += lineHeight + itemSpacing;
@@ -576,8 +611,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        parkingLabel.font = "12px Arial";
-        parkingLabel.fill = hasParking ? "#006600" : "#666666"; // Color coding (Contrast)
+        parkingLabel.font = this.FONTS.BODY;
+        parkingLabel.fill = hasParking ? this.COLORS.SUCCESS : this.COLORS.MUTED_TEXT; // Color coding (Contrast)
         this._detailsContainer.addChild(parkingLabel);
         this._detailsLabels.push(parkingLabel);
         yOffset += lineHeight + itemSpacing;
@@ -590,8 +625,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        petsLabel.font = "12px Arial";
-        petsLabel.fill = hasPets ? "#006600" : "#666666"; // Color coding (Contrast)
+        petsLabel.font = this.FONTS.BODY;
+        petsLabel.fill = hasPets ? this.COLORS.SUCCESS : this.COLORS.MUTED_TEXT; // Color coding (Contrast)
         this._detailsContainer.addChild(petsLabel);
         this._detailsLabels.push(petsLabel);
         yOffset += lineHeight + itemSpacing;
@@ -609,8 +644,8 @@ export class RestaurantFinderView {
                 width: labelWidth,
                 height: lineHeight
             });
-            additionalLabel.font = "11px Arial";
-            additionalLabel.fill = "#006600"; // Green for available features (Contrast)
+            additionalLabel.font = this.FONTS.SMALL;
+            additionalLabel.fill = this.COLORS.SUCCESS; // Green for available features (Contrast)
             this._detailsContainer.addChild(additionalLabel);
             this._detailsLabels.push(additionalLabel);
             yOffset += lineHeight + itemSpacing;
@@ -625,8 +660,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight
         });
-        addressTitle.font = "bold 12px Arial";
-        addressTitle.fill = "#000000";
+        addressTitle.font = this.FONTS.FILTER_TITLE;
+        addressTitle.fill = this.COLORS.PRIMARY_TEXT;
         this._detailsContainer.addChild(addressTitle);
         this._detailsLabels.push(addressTitle);
         yOffset += lineHeight + itemSpacing;
@@ -638,8 +673,8 @@ export class RestaurantFinderView {
             width: labelWidth,
             height: lineHeight * 2
         });
-        addressLabel.font = "11px Arial";
-        addressLabel.fill = "#333333";
+        addressLabel.font = this.FONTS.SMALL;
+        addressLabel.fill = this.COLORS.SECONDARY_TEXT;
         this._detailsContainer.addChild(addressLabel);
         this._detailsLabels.push(addressLabel);
         yOffset += lineHeight * 2 + sectionSpacing;
@@ -653,8 +688,8 @@ export class RestaurantFinderView {
                 width: labelWidth,
                 height: lineHeight
             });
-            descTitle.font = "bold 12px Arial";
-            descTitle.fill = "#000000";
+            descTitle.font = this.FONTS.FILTER_TITLE;
+            descTitle.fill = this.COLORS.PRIMARY_TEXT;
             this._detailsContainer.addChild(descTitle);
             this._detailsLabels.push(descTitle);
             yOffset += lineHeight + itemSpacing;
@@ -666,8 +701,8 @@ export class RestaurantFinderView {
                 width: labelWidth,
                 height: lineHeight * 3
             });
-            descLabel.font = "11px Arial";
-            descLabel.fill = "#333333";
+            descLabel.font = this.FONTS.SMALL;
+            descLabel.fill = this.COLORS.SECONDARY_TEXT;
             this._detailsContainer.addChild(descLabel);
             this._detailsLabels.push(descLabel);
         }
