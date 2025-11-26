@@ -45,6 +45,7 @@ export class MapWidgetView {
 
   // Function to draw label text for a marker
   // Separated from marker drawing to ensure labels appear on top
+  // Ensures labels always stay within map bounds
   public drawLabel(
     gc: CanvasRenderingContext2D,
     lat: number,
@@ -63,6 +64,11 @@ export class MapWidgetView {
     gc.save();
     gc.translate(this._map.x, this._map.y);
     
+    // Clip to map bounds to ensure nothing is drawn outside
+    gc.beginPath();
+    gc.rect(0, 0, this._map.width || 0, this._map.height || 0);
+    gc.clip();
+    
     // Measure text for background sizing
     gc.font = "bold 13px Arial";
     gc.textAlign = "left";
@@ -70,19 +76,55 @@ export class MapWidgetView {
     const textMetrics = gc.measureText(displayData);
     const textWidth = textMetrics.width;
     const textHeight = 16;
+    const padding = 4;
     
-    // Position: above and slightly to the right of the marker
-    const textX = x + 8;
-    const textY = y - 12;
+    // Calculate label bounds
+    const labelWidth = textWidth + padding * 2;
+    const labelHeight = textHeight + padding;
+    
+    // Initial position: above and slightly to the right of the marker
+    let textX = x + 8;
+    let textY = y - 12;
+    
+    // Adjust position to keep label within map bounds
+    const mapWidth = this._map.width || 0;
+    const mapHeight = this._map.height || 0;
+    
+    // Check right edge - if label goes outside, move it to the left of the marker
+    if (textX + labelWidth > mapWidth) {
+      textX = x - textWidth - padding - 8; // Position to the left of marker
+    }
+    
+    // Check left edge - if label goes outside, move it to the right
+    if (textX < padding) {
+      textX = padding;
+    }
+    
+    // Check top edge - if label goes outside, move it below the marker
+    if (textY - labelHeight / 2 < padding) {
+      textY = y + 12; // Position below marker
+    }
+    
+    // Check bottom edge - if label goes outside, move it above
+    if (textY + labelHeight / 2 > mapHeight - padding) {
+      textY = y - 12; // Position above marker
+      // If still outside, position at bottom with padding
+      if (textY - labelHeight / 2 < padding) {
+        textY = mapHeight - labelHeight / 2 - padding;
+      }
+    }
+    
+    // Calculate background rectangle position
+    const bgX = textX - padding;
+    const bgY = textY - textHeight / 2 - padding / 2;
     
     // Draw semi-transparent background rectangle for better contrast
     gc.fillStyle = "rgba(0, 0, 0, 0.7)";
-    const padding = 4;
     gc.fillRect(
-      textX - padding,
-      textY - textHeight / 2 - padding / 2,
-      textWidth + padding * 2,
-      textHeight + padding
+      bgX,
+      bgY,
+      labelWidth,
+      labelHeight
     );
     
     // Draw white text with dark outline for maximum visibility
