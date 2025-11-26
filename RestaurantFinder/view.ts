@@ -69,11 +69,12 @@ export class RestaurantFinderView {
     
     constructor() {
         // Create main container with consistent background
+        // Height will be adjusted dynamically if filter panel expands
         this._container = new SKContainer({
             x: 0,
             y: 0,
             width: 800,
-            height: 600,
+            height: 600,  // Base height, may be adjusted
             fill: this.COLORS.MAIN_BG,  // Consistent background color
         });
         this.createHeader();
@@ -379,6 +380,14 @@ export class RestaurantFinderView {
             const currentHeight = filtersContainer.height || 240;
             if (requiredHeight > currentHeight) {
                 filtersContainer.height = requiredHeight;
+                
+                // Update main container height if filter panel extends beyond it
+                const filterPanelBottom = filtersContainer.y + requiredHeight;
+                const containerBottom = this._container.height || 600;
+                if (filterPanelBottom > containerBottom) {
+                    // Add some padding at the bottom
+                    this._container.height = filterPanelBottom + this.MARGIN;
+                }
             }
         }
         
