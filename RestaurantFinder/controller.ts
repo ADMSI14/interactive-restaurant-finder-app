@@ -1,7 +1,7 @@
 import { setSKEventListener, SKEvent } from "../simplekit/src/imperative-mode";
 import { RestaurantFinderModel } from "./model";
 import { RestaurantFinderView } from "./view";
-import { MapWidget, MapPoint } from "../widgets/MapWidget";
+import { MapPoint } from "../widgets/MapWidget";
 import { Restaurant } from "./model";
 
 export class RestaurantFinderController {
@@ -15,9 +15,9 @@ export class RestaurantFinderController {
         this.setupEventListeners();
     }
 
-    // Set up event listeners for map interactions
+    // Set up event listeners for map interactions and widget actions
     private setupEventListeners(): void {
-        // Listen for events from the map widget
+        // Listen for events from widgets and map
         setSKEventListener((e: SKEvent) => {
             // Check if event is a map widget event
             if (e.type === "point-hover" || e.type === "point-click") {
@@ -30,6 +30,64 @@ export class RestaurantFinderController {
                         this.handleMapClick(e);
                     }
                 }
+            }
+            // Check if event is an action event from widgets
+            else if (e.type === "action") {
+                this.handleWidgetAction(e);
+            }
+        });
+    }
+
+    // Handle action events from widgets
+    private handleWidgetAction(e: SKEvent): void {
+        const source = e.source;
+        if (!source) return;
+        
+        // Check if event is from cost range slider
+        const costSlider = this._view.costRangeSlider;
+        if (costSlider && (costSlider as any)._controller === source) {
+            this.handleCostRangeChange(
+                costSlider.minValue,
+                costSlider.maxValue
+            );
+            return;
+        }
+        
+        // Check if event is from rating range slider
+        const ratingSlider = this._view.ratingRangeSlider;
+        if (ratingSlider && (ratingSlider as any)._controller === source) {
+            this.handleRatingRangeChange(
+                ratingSlider.minValue,
+                ratingSlider.maxValue
+            );
+            return;
+        }
+        
+        // Check if event is from a radio button (type filter)
+        const typeGroup = this._view.typeRadioGroup;
+        if (typeGroup) {
+            // Check "All Types" radio button (first in group)
+            if (typeGroup.radioButtons.length > 0) {
+                const allTypesRadio = typeGroup.radioButtons[0];
+                if ((allTypesRadio as any)._controller === source) {
+                    this.handleTypeChange(null);
+                    return;
+                }
+            }
+            // Check other type radio buttons
+            this._view.typeRadioButtons.forEach((radio, typeName) => {
+                if ((radio as any)._controller === source) {
+                    this.handleTypeChange(typeName);
+                    return;
+                }
+            });
+        }
+        
+        // Check if event is from a checkbox (feature filter)
+        this._view.featureCheckboxes.forEach((checkbox, feature) => {
+            if ((checkbox as any)._controller === source) {
+                this.handleFeatureToggle(feature, checkbox.checked);
+                return;
             }
         });
     }

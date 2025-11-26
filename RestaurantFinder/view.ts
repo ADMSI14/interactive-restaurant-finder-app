@@ -144,15 +144,7 @@ export class RestaurantFinderView {
             thumbColor: "#0066cc",
             rangeColor: "#0066cc"
         });
-        // Set up event listener for cost range changes
-        (this._costRangeSlider as any).setSKEventListener("action", () => {
-            if (this._controller && this._costRangeSlider) {
-                this._controller.handleCostRangeChange(
-                    this._costRangeSlider.minValue,
-                    this._costRangeSlider.maxValue
-                );
-            }
-        });
+        // Event listener will be set up in controller using global event listener
         this._filtersContainer.addChild(this._costRangeSlider);
 
         // Rating Range Filter Section - Below cost range, aligned left
@@ -181,15 +173,7 @@ export class RestaurantFinderView {
             thumbColor: "#0066cc",
             rangeColor: "#0066cc"
         });
-        // Set up event listener for rating range changes
-        (this._ratingRangeSlider as any).setSKEventListener("action", () => {
-            if (this._controller && this._ratingRangeSlider) {
-                this._controller.handleRatingRangeChange(
-                    this._ratingRangeSlider.minValue,
-                    this._ratingRangeSlider.maxValue
-                );
-            }
-        });
+        // Event listener will be set up in controller using global event listener
         this._filtersContainer.addChild(this._ratingRangeSlider);
 
         // Restaurant Type Filter Section - Below rating range, aligned left
@@ -217,11 +201,7 @@ export class RestaurantFinderView {
             width: 20,
             height: 20
         });
-        (allTypesRadio as any).setSKEventListener("action", () => {
-            if (this._controller) {
-                this._controller.handleTypeChange(null);
-            }
-        });
+        // Event listener will be set up in controller using global event listener
         this._typeRadioGroup.addRadioButton(allTypesRadio);
         this._filtersContainer.addChild(allTypesRadio);
         
@@ -235,7 +215,9 @@ export class RestaurantFinderView {
         });
         allTypesLabel.font = this.FONTS.BODY;
         allTypesLabel.fill = this.COLORS.SECONDARY_TEXT;
-        this._filtersContainer.addChild(allTypesLabel);
+        if (this._filtersContainer) {
+            this._filtersContainer.addChild(allTypesLabel);
+        }
         
         // Note: Additional type radio buttons will be added dynamically via updateRestaurantType method
 
@@ -270,14 +252,11 @@ export class RestaurantFinderView {
                 width: 20,
                 height: 20
             });
-            // Set up event listener for checkbox changes
-            (checkbox as any).setSKEventListener("action", () => {
-                if (this._controller) {
-                    this._controller.handleFeatureToggle(feature, checkbox.checked);
-                }
-            });
+            // Event listener will be set up in controller using global event listener
             this._featureCheckboxes.set(feature, checkbox);
-            this._filtersContainer.addChild(checkbox);
+            if (this._filtersContainer) {
+                this._filtersContainer.addChild(checkbox);
+            }
             
             // Feature label next to checkbox
             const featureLabel = new SKLabel({
@@ -289,7 +268,9 @@ export class RestaurantFinderView {
             });
             featureLabel.font = this.FONTS.BODY;
             featureLabel.fill = this.COLORS.SECONDARY_TEXT;
-            this._filtersContainer.addChild(featureLabel);
+            if (this._filtersContainer) {
+                this._filtersContainer.addChild(featureLabel);
+            }
             
             featureY += 25;  // Consistent spacing between features
         });
@@ -393,11 +374,7 @@ export class RestaurantFinderView {
                 width: 20,
                 height: 20
             });
-            (typeRadio as any).setSKEventListener("action", () => {
-                if (this._controller) {
-                    this._controller.handleTypeChange(typeName);
-                }
-            });
+            // Event listener will be set up in controller using global event listener
             if (this._typeRadioGroup) {
                 this._typeRadioGroup.addRadioButton(typeRadio);
             }
@@ -416,7 +393,9 @@ export class RestaurantFinderView {
             });
             typeLabel.font = this.FONTS.BODY;
             typeLabel.fill = this.COLORS.SECONDARY_TEXT;
-            this._filtersContainer.addChild(typeLabel);
+            if (this._filtersContainer) {
+                this._filtersContainer.addChild(typeLabel);
+            }
         });
     }
 
@@ -432,6 +411,27 @@ export class RestaurantFinderView {
     // Get the main container
     public get container(): SKContainer {
         return this._container;
+    }
+
+    // Getters for widgets (used by controller for event handling)
+    public get costRangeSlider(): RangeSlider | null {
+        return this._costRangeSlider;
+    }
+
+    public get ratingRangeSlider(): RangeSlider | null {
+        return this._ratingRangeSlider;
+    }
+
+    public get typeRadioButtons(): Map<string, RadioButton> {
+        return this._typeRadioButtons;
+    }
+
+    public get typeRadioGroup(): RadioButtonGroup | null {
+        return this._typeRadioGroup;
+    }
+
+    public get featureCheckboxes(): Map<string, CheckBox> {
+        return this._featureCheckboxes;
     }
 
     // Convert Restaurant to MapPoint format for MapWidget
