@@ -20,6 +20,8 @@ export class RestaurantFinderView {
     private readonly SECTION_SPACING = 15;   // Spacing between major sections
     private readonly HEADER_HEIGHT = 40;     // Height for header/title area
     private readonly FILTER_PANEL_PADDING = 10;  // Internal padding for filter panel
+    private readonly DETAILS_PANEL_WIDTH = 240;  // Width of details panel
+    private readonly DETAILS_PANEL_PADDING = 15;  // Internal padding for details panel
     
     constructor() {
         // Create main container with consistent background
@@ -377,16 +379,16 @@ export class RestaurantFinderView {
         } else {
             // Create details container if it doesn't exist
             // Positioned to the right of map with consistent spacing (CRAP: Alignment, Proximity)
-            // Use getMapLayout() for consistency
+            // Use getMapLayout() for consistency - aligned with map top and height
             const mapLayout = this.getMapLayout();
             const detailsX = mapLayout.x + mapLayout.width + this.SECTION_SPACING;
-            const detailsY = mapLayout.y;
+            const detailsY = mapLayout.y;  // Aligned with map top (CRAP: Alignment)
             
             this._detailsContainer = new SKContainer({
                 x: detailsX,
                 y: detailsY,
-                width: 240,  // Slightly wider for better readability
-                height: 400,
+                width: this.DETAILS_PANEL_WIDTH,  // Consistent width
+                height: mapLayout.height,  // Same height as map for alignment
                 fill: "#fafafa",  // Very light gray for subtle contrast
                 border: "#424242"  // Dark gray border for definition
             });
@@ -395,11 +397,12 @@ export class RestaurantFinderView {
 
         if (!restaurant) {
             // Show placeholder when no restaurant is selected
+            // Positioned with consistent padding (CRAP: Alignment)
             const placeholder = new SKLabel({
                 text: "Click on a restaurant marker to see details",
-                x: 15,
-                y: 20,
-                width: 190,
+                x: this.DETAILS_PANEL_PADDING,
+                y: this.DETAILS_PANEL_PADDING + 10,
+                width: this.DETAILS_PANEL_WIDTH - (this.DETAILS_PANEL_PADDING * 2),
                 height: 40
             });
             placeholder.font = "12px Arial";
@@ -410,9 +413,10 @@ export class RestaurantFinderView {
         }
 
         // Design constants following CRAP principles
-        const leftMargin = 15;        // Consistent left alignment
-        const topMargin = 15;          // Consistent top margin
-        const labelWidth = 190;        // Consistent width for alignment
+        // Use layout constants for consistency
+        const leftMargin = this.DETAILS_PANEL_PADDING;        // Consistent left alignment
+        const topMargin = this.DETAILS_PANEL_PADDING;          // Consistent top margin
+        const labelWidth = this.DETAILS_PANEL_WIDTH - (this.DETAILS_PANEL_PADDING * 2);  // Consistent width for alignment
         const sectionSpacing = 15;     // Spacing between sections (Proximity)
         const itemSpacing = 8;         // Spacing between items (Proximity)
         const lineHeight = 20;         // Consistent line height (Repetition)
