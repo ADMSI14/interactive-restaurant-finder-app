@@ -2,15 +2,15 @@
 
 ## Name
 
-replace me with your name
+Mohnish Dev Budhna
 
 ## Student Number
 
-55555555555
+3766711
 
 ## GitHub Username
 
-githubuser
+ADMSI14
 
 ## Any comments, notes or considerations
 
