@@ -65,6 +65,11 @@ export class RangeSliderController {
                     this._model.state = "dragging-max";
                 }
 
+                // Call the onChange callback if it's set
+                if (this._rangeSlider.onChange) {
+                    this._rangeSlider.onChange(this._model.minValue, this._model.maxValue);
+                }
+
                 // Trigger action event
                 if (
                     this._rangeSlider.sendEvent({
@@ -89,6 +94,11 @@ export class RangeSliderController {
                     } else {
                         this._model.maxValue = newValue;
                         this._model.state = "dragging-max";
+                    }
+
+                    // Call the onChange callback if it's set
+                    if (this._rangeSlider.onChange) {
+                        this._rangeSlider.onChange(this._model.minValue, this._model.maxValue);
                     }
 
                     // Trigger action event for continuous updates

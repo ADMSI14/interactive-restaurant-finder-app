@@ -229,6 +229,26 @@ export class RestaurantFinderController {
         });
         console.log(`Checkbox onChange callbacks set for ${this._view.featureCheckboxes.size} checkboxes`);
         
+        // Set up range slider onChange callbacks for cost and rating filters
+        console.log("Setting up range slider onChange callbacks");
+        const costSlider = this._view.costRangeSlider;
+        if (costSlider) {
+            costSlider.onChange = (minValue: number, maxValue: number) => {
+                console.log(`Cost range slider onChange callback: ${minValue} - ${maxValue}`);
+                this.handleCostRangeChange(minValue, maxValue);
+            };
+            console.log("Cost range slider onChange callback set");
+        }
+        
+        const ratingSlider = this._view.ratingRangeSlider;
+        if (ratingSlider) {
+            ratingSlider.onChange = (minValue: number, maxValue: number) => {
+                console.log(`Rating range slider onChange callback: ${minValue} - ${maxValue}`);
+                this.handleRatingRangeChange(minValue, maxValue);
+            };
+            console.log("Rating range slider onChange callback set");
+        }
+        
         // Initialize slider bounds with actual data ranges
         const dataRanges = this._model.getDataRanges();
         this._view.updateCostRangeBounds(dataRanges.minCost, dataRanges.maxCost);

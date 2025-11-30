@@ -20,6 +20,9 @@ export class RangeSlider extends SKElement {
     private _view: RangeSliderView;
     private _controller: RangeSliderController;
 
+    // Callback for when range slider values change
+    public onChange: ((minValue: number, maxValue: number) => void) | null = null;
+
     // Custom colors
     protected _highlightColour = Style.highlightColour;
     protected _trackColor: string | undefined;
