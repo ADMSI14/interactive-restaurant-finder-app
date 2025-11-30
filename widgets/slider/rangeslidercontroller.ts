@@ -16,16 +16,16 @@ export class RangeSliderController {
 
     // Calculate which thumb is closest to the mouse position
     private getClosestThumb(mouseX: number): "min" | "max" {
-        const width = this._rangeSlider.width;
+        const width = this._rangeSlider.width || 200;
         const TRACK_PADDING = 10;
-        const trackStartX = TRACK_PADDING;
-        const trackEndX = width - TRACK_PADDING;
-        const trackWidth = trackEndX - trackStartX;
+        const visualTrackStart = TRACK_PADDING;
+        const visualTrackEnd = width - TRACK_PADDING;
+        const trackWidth = visualTrackEnd - visualTrackStart;
 
         const minPosition = this._model.positionFromMinValue();
         const maxPosition = this._model.positionFromMaxValue();
-        const minX = trackStartX + minPosition * trackWidth;
-        const maxX = trackStartX + maxPosition * trackWidth;
+        const minX = visualTrackStart + minPosition * trackWidth;
+        const maxX = visualTrackStart + maxPosition * trackWidth;
 
         // Determine which thumb is closer to the mouse
         const distanceToMin = Math.abs(mouseX - minX);
@@ -35,11 +35,10 @@ export class RangeSliderController {
     }
 
     handleMouseEvent(me: SKMouseEvent) {
-        const width = this._rangeSlider.width;
+        const width = this._rangeSlider.width || 200;
         const TRACK_PADDING = 10;
-        const trackStartX = TRACK_PADDING;
-        const trackEndX = width - TRACK_PADDING;
-        const trackWidth = trackEndX - trackStartX;
+        // Allow thumb to reach from 0 to width (full slider width)
+        // Track visually starts at TRACK_PADDING but we allow interaction from 0
 
         // Calculate mouse position relative to range slider (accounting for slider's position and margin)
         // Mouse events are in global coordinates, so subtract slider's global position
@@ -53,7 +52,23 @@ export class RangeSliderController {
                 this._isDragging = true;
 
                 // Calculate position relative to slider track
-                const relativePosition = (mouseX - trackStartX) / trackWidth;
+                // Map mouseX (0 to width) to track position (TRACK_PADDING to width-TRACK_PADDING)
+                const clampedMouseX = Math.max(0, Math.min(width, mouseX));
+                // Convert to relative position on visual track (0.0 to 1.0)
+                // Visual track starts at TRACK_PADDING, so adjust accordingly
+                const visualTrackStart = TRACK_PADDING;
+                const visualTrackEnd = width - TRACK_PADDING;
+                const visualTrackWidth = visualTrackEnd - visualTrackStart;
+                
+                let relativePosition: number;
+                if (clampedMouseX <= visualTrackStart) {
+                    relativePosition = 0;  // At or before visual track start = minimum
+                } else if (clampedMouseX >= visualTrackEnd) {
+                    relativePosition = 1;  // At or after visual track end = maximum
+                } else {
+                    relativePosition = (clampedMouseX - visualTrackStart) / visualTrackWidth;
+                }
+                
                 const newValue = this._model.valueFromPosition(relativePosition);
 
                 // Update the appropriate thumb
@@ -84,7 +99,23 @@ export class RangeSliderController {
             case "mousemove":
                 if (this._isDragging && this._model.draggingThumb) {
                     // Calculate position relative to slider track
-                    const relativePosition = (mouseX - trackStartX) / trackWidth;
+                    // Map mouseX (0 to width) to track position (TRACK_PADDING to width-TRACK_PADDING)
+                    const clampedMouseX = Math.max(0, Math.min(width, mouseX));
+                    // Convert to relative position on visual track (0.0 to 1.0)
+                    // Visual track starts at TRACK_PADDING, so adjust accordingly
+                    const visualTrackStart = TRACK_PADDING;
+                    const visualTrackEnd = width - TRACK_PADDING;
+                    const visualTrackWidth = visualTrackEnd - visualTrackStart;
+                    
+                    let relativePosition: number;
+                    if (clampedMouseX <= visualTrackStart) {
+                        relativePosition = 0;  // At or before visual track start = minimum
+                    } else if (clampedMouseX >= visualTrackEnd) {
+                        relativePosition = 1;  // At or after visual track end = maximum
+                    } else {
+                        relativePosition = (clampedMouseX - visualTrackStart) / visualTrackWidth;
+                    }
+                    
                     const newValue = this._model.valueFromPosition(relativePosition);
 
                     // Update the appropriate thumb
