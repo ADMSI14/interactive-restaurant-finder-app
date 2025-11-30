@@ -14,6 +14,8 @@ export class RestaurantFinderView {
     private _rightSideContainer: SKContainer | null = null;
     private _costRangeSlider: RangeSlider | null = null;
     private _ratingRangeSlider: RangeSlider | null = null;
+    private _costRangeLabel: SKLabel | null = null;
+    private _ratingRangeLabel: SKLabel | null = null;
     private _typeRadioGroup: RadioButtonGroup | null = null;
     private _typeRadioButtons: Map<string, RadioButton> = new Map();
     private _typeLabels: Map<string, SKLabel> = new Map();
@@ -152,6 +154,19 @@ export class RestaurantFinderView {
         // Event listener will be set up in controller using global event listener
         this._filtersContainer.addChild(this._costRangeSlider);
 
+        // Cost Range Label - Shows the selected cost range
+        this._costRangeLabel = new SKLabel({
+            text: "$0 - $1000",
+            x: this.FILTER_PANEL_PADDING + 60 + 300 + 10,  // To the right of the slider
+            y: this.FILTER_PANEL_PADDING + 25,
+            width: 120,
+            height: 20
+        });
+        this._costRangeLabel.font = this.FONTS.BODY;
+        this._costRangeLabel.fill = "";  // No background fill
+        this._costRangeLabel.fontColour = this.COLORS.SECONDARY_TEXT;
+        this._filtersContainer.addChild(this._costRangeLabel);
+
         // Rating Range Filter Section - Below cost range, aligned left
         const ratingTitle = new SKLabel({
             text: "Rating Range:",
@@ -181,6 +196,19 @@ export class RestaurantFinderView {
         });
         // Event listener will be set up in controller using global event listener
         this._filtersContainer.addChild(this._ratingRangeSlider);
+
+        // Rating Range Label - Shows the selected rating range
+        this._ratingRangeLabel = new SKLabel({
+            text: "0.0 - 5.0",
+            x: this.FILTER_PANEL_PADDING + 60 + 300 + 10,  // To the right of the slider
+            y: this.FILTER_PANEL_PADDING + 85,
+            width: 120,
+            height: 20
+        });
+        this._ratingRangeLabel.font = this.FONTS.BODY;
+        this._ratingRangeLabel.fill = "";  // No background fill
+        this._ratingRangeLabel.fontColour = this.COLORS.SECONDARY_TEXT;
+        this._filtersContainer.addChild(this._ratingRangeLabel);
 
         // Note: Restaurant Type section has been moved to the right-side container
 
@@ -277,6 +305,10 @@ export class RestaurantFinderView {
             this._costRangeSlider.minValue = minCost;
             this._costRangeSlider.maxValue = maxCost;
         }
+        // Update cost range label
+        if (this._costRangeLabel) {
+            this._costRangeLabel.text = `$${Math.round(minCost)} - $${Math.round(maxCost)}`;
+        }
     }
 
     // Update cost range slider bounds (min/max possible values)
@@ -292,6 +324,10 @@ export class RestaurantFinderView {
         if (this._ratingRangeSlider) {
             this._ratingRangeSlider.minValue = minRating;
             this._ratingRangeSlider.maxValue = maxRating;
+        }
+        // Update rating range label
+        if (this._ratingRangeLabel) {
+            this._ratingRangeLabel.text = `${minRating.toFixed(1)} - ${maxRating.toFixed(1)}`;
         }
     }
 
