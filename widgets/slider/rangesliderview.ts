@@ -46,14 +46,19 @@ export class RangeSliderView {
         // Draw active range (between min and max thumbs)
         const minPosition = this._model.positionFromMinValue();
         const maxPosition = this._model.positionFromMaxValue();
-        const minX = trackStartX + minPosition * trackWidth;
-        const maxX = trackStartX + maxPosition * trackWidth;
+        // Allow thumbs to extend to edges (0 and width) when at min/max values
+        // This allows the thumb to visually reach the absolute left/right edges
+        const minX = minPosition === 0 ? 0 : trackStartX + minPosition * trackWidth;
+        const maxX = maxPosition === 1 ? width : trackStartX + maxPosition * trackWidth;
 
         // Draw active range highlight
-        if (minX < maxX) {
+        // Use track boundaries for the highlight, but allow thumbs to extend beyond
+        const highlightStartX = Math.max(trackStartX, minX);
+        const highlightEndX = Math.min(trackEndX, maxX);
+        if (highlightStartX < highlightEndX) {
             gc.beginPath();
-            gc.moveTo(minX, trackY);
-            gc.lineTo(maxX, trackY);
+            gc.moveTo(highlightStartX, trackY);
+            gc.lineTo(highlightEndX, trackY);
             gc.strokeStyle = this._rangeSlider.rangeColor || "#0066cc";
             gc.lineWidth = this.TRACK_HEIGHT;
             gc.stroke();
