@@ -648,6 +648,19 @@ export class RestaurantFinderView {
                 this._point2StatusLabel.fontColour = this.COLORS.MUTED_TEXT;
             }
         }
+        
+        // Update instruction label based on point selection state
+        if (this._clearPointsLabel) {
+            if (!point1 && !point2) {
+                this._clearPointsLabel.text = "Click map to select points";
+            } else if (point1 && !point2) {
+                this._clearPointsLabel.text = "Select second point on map";
+                this._clearPointsLabel.fontColour = this.COLORS.SECONDARY_TEXT;
+            } else if (point1 && point2) {
+                this._clearPointsLabel.text = "Both points selected • Click map to change";
+                this._clearPointsLabel.fontColour = this.COLORS.SUCCESS;
+            }
+        }
     }
 
     // Update distance filter state (comprehensive update)

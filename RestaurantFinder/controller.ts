@@ -502,6 +502,11 @@ export class RestaurantFinderController {
     // Handle distance filter toggle (enable/disable)
     public handleDistanceFilterToggle(enabled: boolean): void {
         console.log("handleDistanceFilterToggle called, enabled:", enabled);
+        
+        // Edge case: If enabling but no points are set, allow it but filter won't apply until points are set
+        // The filter logic already handles this by checking if both points exist
+        // When disabling, keep the points (they'll just be inactive)
+        
         this._model.setDistanceFilterEnabled(enabled);
         
         // Update view display
@@ -511,8 +516,15 @@ export class RestaurantFinderController {
         // Update map widget with selection points and max distance
         const mapWidget = this._view.mapWidget;
         if (mapWidget) {
-            mapWidget.selectionPoint1 = filterState.point1;
-            mapWidget.selectionPoint2 = filterState.point2;
+            // Only show selection points if filter is enabled
+            if (enabled) {
+                mapWidget.selectionPoint1 = filterState.point1;
+                mapWidget.selectionPoint2 = filterState.point2;
+            } else {
+                // Hide selection points when filter is disabled
+                mapWidget.selectionPoint1 = null;
+                mapWidget.selectionPoint2 = null;
+            }
             mapWidget.maxDistance = filterState.maxDistance;
         }
         
