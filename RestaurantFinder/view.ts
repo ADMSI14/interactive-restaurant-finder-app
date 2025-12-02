@@ -588,6 +588,66 @@ export class RestaurantFinderView {
         });
     }
 
+    // Update distance filter enabled state
+    public updateDistanceFilterEnabled(enabled: boolean): void {
+        if (this._distanceFilterCheckbox) {
+            this._distanceFilterCheckbox.checked = enabled;
+        }
+    }
+
+    // Update max distance display
+    public updateMaxDistance(km: number): void {
+        if (this._maxDistanceSlider) {
+            // Only update if slider is not currently being dragged to avoid freezing
+            const isDragging = (this._maxDistanceSlider as any)._controller?._isDragging || false;
+            if (!isDragging) {
+                this._maxDistanceSlider.value = km;
+            }
+        }
+        // Update max distance label
+        if (this._maxDistanceLabel) {
+            this._maxDistanceLabel.text = `${km.toFixed(1)} km`;
+        }
+    }
+
+    // Update selection points status labels
+    public updateSelectionPoints(
+        point1: { latitude: number; longitude: number } | null,
+        point2: { latitude: number; longitude: number } | null
+    ): void {
+        if (this._point1StatusLabel) {
+            if (point1) {
+                this._point1StatusLabel.text = `Point 1: (${point1.latitude.toFixed(4)}, ${point1.longitude.toFixed(4)})`;
+                this._point1StatusLabel.fontColour = this.COLORS.SUCCESS;
+            } else {
+                this._point1StatusLabel.text = "Point 1: Not selected";
+                this._point1StatusLabel.fontColour = this.COLORS.MUTED_TEXT;
+            }
+        }
+
+        if (this._point2StatusLabel) {
+            if (point2) {
+                this._point2StatusLabel.text = `Point 2: (${point2.latitude.toFixed(4)}, ${point2.longitude.toFixed(4)})`;
+                this._point2StatusLabel.fontColour = this.COLORS.SUCCESS;
+            } else {
+                this._point2StatusLabel.text = "Point 2: Not selected";
+                this._point2StatusLabel.fontColour = this.COLORS.MUTED_TEXT;
+            }
+        }
+    }
+
+    // Update distance filter state (comprehensive update)
+    public updateDistanceFilterState(
+        enabled: boolean,
+        point1: { latitude: number; longitude: number } | null,
+        point2: { latitude: number; longitude: number } | null,
+        maxDistance: number
+    ): void {
+        this.updateDistanceFilterEnabled(enabled);
+        this.updateSelectionPoints(point1, point2);
+        this.updateMaxDistance(maxDistance);
+    }
+
     // Get the main container
     public get container(): SKContainer {
         return this._container;
