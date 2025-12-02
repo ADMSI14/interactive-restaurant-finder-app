@@ -126,7 +126,7 @@ export class RestaurantFinderView {
             x: this.MARGIN,  // Aligned with map left edge (CRAP: Alignment)
             y: filterY,
             width: 1238,  // spans the width of the screen - right container 
-            height: 145,  // reduced height to fit the screen
+            height: 180,  // increased by additional 5px (was 175)
             fill: this.COLORS.PANEL_BG,  // Consistent panel background
             border: this.COLORS.SECONDARY_BORDER  // Consistent border color
         });
@@ -856,12 +856,13 @@ export class RestaurantFinderView {
         const rightSideWidth = 250;
         
         // Calculate right-side container height to align bottom with filter container bottom
-        // Filter container: y = mapLayout.y + mapLayout.height + SECTION_SPACING, height = 145
-        // Filter container bottom = mapLayout.y + mapLayout.height + SECTION_SPACING + 145
+        // Filter container: y = mapLayout.y + mapLayout.height + SECTION_SPACING, height = 180
+        // Filter container bottom = mapLayout.y + mapLayout.height + SECTION_SPACING + 180
         // Right-side container top = mapLayout.y
         // Right-side container height = (filter container bottom) - (right-side container top)
         const filterY = mapLayout.y + mapLayout.height + this.SECTION_SPACING;
-        const filterContainerBottom = filterY + 145; // Filter container height is 145
+        const filterContainerHeight = 180; // Filter container height (increased by additional 5px from 175)
+        const filterContainerBottom = filterY + filterContainerHeight;
         const rightSideHeight = filterContainerBottom - rightSideY;
         
         this._rightSideContainer = new SKContainer({
