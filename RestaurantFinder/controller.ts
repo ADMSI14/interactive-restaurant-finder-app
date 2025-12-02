@@ -34,6 +34,17 @@ export class RestaurantFinderController {
                     console.log("Map event data validation failed:", eventData);
                 }
             }
+            // Check if event is a map area click (empty area, not a restaurant marker)
+            else if (e.type === "map-click") {
+                console.log(`Received map-click event:`, e);
+                const eventData = (e as any).data;
+                // Verify it has latitude and longitude
+                if (eventData && typeof eventData.latitude === 'number' && typeof eventData.longitude === 'number') {
+                    this.handleMapAreaClick(eventData.latitude, eventData.longitude);
+                } else {
+                    console.log("Map-click event data validation failed:", eventData);
+                }
+            }
             // Check if event is an action event from widgets
             else if (e.type === "action") {
                 console.log("Received action event:", e);
@@ -168,6 +179,50 @@ export class RestaurantFinderController {
         }
     }
 
+    // Handle click event on empty map area (for distance filter point selection)
+    private handleMapAreaClick(latitude: number, longitude: number): void {
+        console.log("handleMapAreaClick called", latitude, longitude);
+        
+        // Check if distance filter is enabled
+        const filterState = this._model.filterState;
+        if (!filterState.distanceFilterEnabled) {
+            console.log("Distance filter is not enabled, ignoring map area click");
+            return;
+        }
+
+        // Determine which point to set
+        if (filterState.point1 === null) {
+            // Set point 1
+            console.log("Setting point 1");
+            this._model.setDistancePoint1(latitude, longitude);
+        } else if (filterState.point2 === null) {
+            // Set point 2
+            console.log("Setting point 2");
+            this._model.setDistancePoint2(latitude, longitude);
+        } else {
+            // Both points are set, cycle: replace point 1 with new click
+            console.log("Both points set, replacing point 1");
+            this._model.setDistancePoint1(latitude, longitude);
+        }
+
+        // Update view to show selection points
+        const updatedFilterState = this._model.filterState;
+        this._view.updateSelectionPoints(
+            updatedFilterState.point1,
+            updatedFilterState.point2
+        );
+
+        // Update map widget with selection points
+        const mapWidget = this._view.mapWidget;
+        if (mapWidget) {
+            mapWidget.selectionPoint1 = updatedFilterState.point1;
+            mapWidget.selectionPoint2 = updatedFilterState.point2;
+            mapWidget.maxDistance = updatedFilterState.maxDistance;
+        }
+
+        console.log("Map area click handled, points updated");
+    }
+
     // Called when map widget is created (from view)
     public onMapWidgetCreated(mapWidget: MapWidget): void {
         console.log("onMapWidgetCreated called, setting up click handler");
@@ -181,7 +236,14 @@ export class RestaurantFinderController {
                 this._view.updateRestaurantDetails(restaurant);
             }
         };
-        console.log("Click handler set on map widget");
+        
+        // Set up map area click handler for distance filter point selection
+        mapWidget.onMapClick = (latitude: number, longitude: number) => {
+            console.log("MapWidget onMapClick callback called", latitude, longitude);
+            this.handleMapAreaClick(latitude, longitude);
+        };
+        
+        console.log("Click handlers set on map widget");
     }
 
     // Initialize the view with initial data
@@ -270,7 +332,14 @@ export class RestaurantFinderController {
                     this._view.updateRestaurantDetails(restaurant);
                 }
             };
-            console.log("Click handler set on map widget");
+            
+            // Set up map area click handler for distance filter point selection
+            mapWidget.onMapClick = (latitude: number, longitude: number) => {
+                console.log("MapWidget onMapClick callback called", latitude, longitude);
+                this.handleMapAreaClick(latitude, longitude);
+            };
+            
+            console.log("Click handlers set on map widget");
         } else {
             console.log("Map widget not available in initialize()");
         }
