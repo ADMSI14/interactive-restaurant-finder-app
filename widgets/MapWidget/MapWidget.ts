@@ -13,6 +13,10 @@ export class MapWidget extends SKElement {
   private _view: MapWidgetView;
   private _controller: MapWidgetController;
   private _onPointClick: ((mapPoint: MapPoint) => void) | null = null;
+  private _onMapClick: ((latitude: number, longitude: number) => void) | null = null;
+  private _selectionPoint1: { latitude: number; longitude: number } | null = null;
+  private _selectionPoint2: { latitude: number; longitude: number } | null = null;
+  private _maxDistance: number = 5; // Default 5 km
 
   constructor(
     points: MapPoint[],
@@ -84,6 +88,41 @@ export class MapWidget extends SKElement {
 
   public get onPointClick(): ((mapPoint: MapPoint) => void) | null {
     return this._onPointClick;
+  }
+
+  // Set map area click handler callback (for empty area clicks)
+  public set onMapClick(handler: ((latitude: number, longitude: number) => void) | null) {
+    this._onMapClick = handler;
+  }
+
+  public get onMapClick(): ((latitude: number, longitude: number) => void) | null {
+    return this._onMapClick;
+  }
+
+  // Selection points for distance filter
+  public set selectionPoint1(point: { latitude: number; longitude: number } | null) {
+    this._selectionPoint1 = point;
+  }
+
+  public get selectionPoint1(): { latitude: number; longitude: number } | null {
+    return this._selectionPoint1;
+  }
+
+  public set selectionPoint2(point: { latitude: number; longitude: number } | null) {
+    this._selectionPoint2 = point;
+  }
+
+  public get selectionPoint2(): { latitude: number; longitude: number } | null {
+    return this._selectionPoint2;
+  }
+
+  // Maximum distance for distance filter (in kilometers)
+  public set maxDistance(km: number) {
+    this._maxDistance = Math.max(0, km);
+  }
+
+  public get maxDistance(): number {
+    return this._maxDistance;
   }
 }
 

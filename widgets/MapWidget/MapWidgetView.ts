@@ -270,35 +270,33 @@ export class MapWidgetView {
     });
 
     // Draw distance circles and selection points (if distance filter is active)
-    // Access selection points and max distance from map widget (will be added in Step 2.4)
-    const mapWidget = this._map as any;
-    if (mapWidget.selectionPoint1 && mapWidget.maxDistance) {
+    if (this._map.selectionPoint1 && this._map.maxDistance) {
       this.drawDistanceCircle(
         gc,
-        mapWidget.selectionPoint1.latitude,
-        mapWidget.selectionPoint1.longitude,
-        mapWidget.maxDistance
+        this._map.selectionPoint1.latitude,
+        this._map.selectionPoint1.longitude,
+        this._map.maxDistance
       );
       this.drawSelectionPoint(
         gc,
-        mapWidget.selectionPoint1.latitude,
-        mapWidget.selectionPoint1.longitude,
+        this._map.selectionPoint1.latitude,
+        this._map.selectionPoint1.longitude,
         1,
         "#0066cc" // Blue for point 1
       );
     }
     
-    if (mapWidget.selectionPoint2 && mapWidget.maxDistance) {
+    if (this._map.selectionPoint2 && this._map.maxDistance) {
       this.drawDistanceCircle(
         gc,
-        mapWidget.selectionPoint2.latitude,
-        mapWidget.selectionPoint2.longitude,
-        mapWidget.maxDistance
+        this._map.selectionPoint2.latitude,
+        this._map.selectionPoint2.longitude,
+        this._map.maxDistance
       );
       this.drawSelectionPoint(
         gc,
-        mapWidget.selectionPoint2.latitude,
-        mapWidget.selectionPoint2.longitude,
+        this._map.selectionPoint2.latitude,
+        this._map.selectionPoint2.longitude,
         2,
         "#00cc66" // Green for point 2
       );

@@ -114,7 +114,13 @@ export class MapWidgetController {
         
         console.log(`MapWidgetController: Click detected on empty map area at (${latitude}, ${longitude})`);
         
-        // Send map-click event with lat/long coordinates
+        // Try callback first (direct handler)
+        if (this._map.onMapClick) {
+          console.log(`MapWidgetController: Calling onMapClick callback`);
+          this._map.onMapClick(latitude, longitude);
+        }
+        
+        // Also send event for global listener (backup)
         const mapClickEvent = {
           source: this,
           timeStamp: me.timeStamp,
