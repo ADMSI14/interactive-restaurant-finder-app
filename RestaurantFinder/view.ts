@@ -28,6 +28,7 @@ export class RestaurantFinderView {
     private _point1StatusLabel: SKLabel | null = null;
     private _point2StatusLabel: SKLabel | null = null;
     private _clearPointsLabel: SKLabel | null = null;
+    private _mapInstructionLabel: SKLabel | null = null;
     
     // Reference to controller for event handling (set after construction)
     private _controller: any = null;
@@ -593,6 +594,19 @@ export class RestaurantFinderView {
         if (this._distanceFilterCheckbox) {
             this._distanceFilterCheckbox.checked = enabled;
         }
+        // Update map instruction text based on filter state
+        this.updateMapInstruction(enabled);
+    }
+
+    // Update map instruction text based on distance filter state
+    private updateMapInstruction(distanceFilterEnabled: boolean): void {
+        if (this._mapInstructionLabel) {
+            if (distanceFilterEnabled) {
+                this._mapInstructionLabel.text = "Click on map to select points • Click markers for details";
+            } else {
+                this._mapInstructionLabel.text = "Hover over markers to see details • Click to select";
+            }
+        }
     }
 
     // Update max distance display
@@ -763,18 +777,18 @@ export class RestaurantFinderView {
             mapTitle.fontColour = this.COLORS.PRIMARY_TEXT;
             this._container.addChild(mapTitle);
             
-            // Add instruction text below map title
-            const mapInstruction = new SKLabel({
+            // Add instruction text below map title (will be updated based on filter state)
+            this._mapInstructionLabel = new SKLabel({
                 text: "Hover over markers to see details • Click to select",
                 x: mapLayout.x,
                 y: mapLayout.y - 2,
                 width: mapLayout.width,
                 height: 14
             });
-            mapInstruction.font = this.FONTS.SMALL;
-            mapInstruction.fill = "";  // No background fill
-            mapInstruction.fontColour = this.COLORS.MUTED_TEXT;
-            this._container.addChild(mapInstruction);
+            this._mapInstructionLabel.font = this.FONTS.SMALL;
+            this._mapInstructionLabel.fill = "";  // No background fill
+            this._mapInstructionLabel.fontColour = this.COLORS.MUTED_TEXT;
+            this._container.addChild(this._mapInstructionLabel);
         }
     }
 
