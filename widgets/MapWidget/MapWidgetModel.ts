@@ -56,4 +56,20 @@ export class MapWidgetModel {
       ((lat - this._minLat) / (this._maxLat - this._minLat)) * canvasHeight;
     return { x,y };
   }
+
+  // Function to convert canvas coordinates to latitude and longitude
+  public canvasToLatLon(
+    x: number,
+    y: number,
+    canvasWidth: number = 400,
+    canvasHeight: number = 400
+  ) {
+    // Convert x coordinate to longitude
+    const lon = this._minLon + (x / canvasWidth) * (this._maxLon - this._minLon);
+    
+    // Convert y coordinate to latitude (note: y is inverted in canvas coordinates)
+    const lat = this._minLat + ((canvasHeight - y) / canvasHeight) * (this._maxLat - this._minLat);
+    
+    return { latitude: lat, longitude: lon };
+  }
 }
