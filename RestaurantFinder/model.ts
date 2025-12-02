@@ -167,6 +167,34 @@ export class RestaurantFinderModel {
         this.applyFilters();
     }
 
+    // Distance filter methods
+    public setDistancePoint1(latitude: number, longitude: number): void {
+        this._filterState.point1 = { latitude, longitude };
+        this.applyFilters();
+    }
+
+    public setDistancePoint2(latitude: number, longitude: number): void {
+        this._filterState.point2 = { latitude, longitude };
+        this.applyFilters();
+    }
+
+    public clearDistancePoints(): void {
+        this._filterState.point1 = null;
+        this._filterState.point2 = null;
+        this.applyFilters();
+    }
+
+    public setMaxDistance(km: number): void {
+        // Ensure max distance is non-negative
+        this._filterState.maxDistance = Math.max(0, km);
+        this.applyFilters();
+    }
+
+    public setDistanceFilterEnabled(enabled: boolean): void {
+        this._filterState.distanceFilterEnabled = enabled;
+        this.applyFilters();
+    }
+
     // Apply all filters to restaurants
     // This method applies all active filters in sequence to filter the restaurant list
     public applyFilters(): void {
