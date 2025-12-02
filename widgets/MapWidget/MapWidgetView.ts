@@ -43,6 +43,94 @@ export class MapWidgetView {
     gc.restore();
   }
 
+  // Function to draw a selection point (for distance filter)
+  public drawSelectionPoint(
+    gc: CanvasRenderingContext2D,
+    lat: number,
+    lon: number,
+    pointNumber: number,
+    color: string
+  ) {
+    const { x, y } = this._model.latLonToCanvas(
+      lat,
+      lon,
+      this._map.width,
+      this._map.height
+    );
+    gc.save();
+    gc.translate(this._map.x, this._map.y);
+    
+    // Draw outer circle
+    gc.beginPath();
+    gc.arc(x, y, 8, 0, 2 * Math.PI);
+    gc.fillStyle = color;
+    gc.fill();
+    gc.strokeStyle = "white";
+    gc.lineWidth = 2;
+    gc.stroke();
+    gc.closePath();
+    
+    // Draw number label
+    gc.fillStyle = "white";
+    gc.font = "bold 12px Arial";
+    gc.textAlign = "center";
+    gc.textBaseline = "middle";
+    gc.fillText(pointNumber.toString(), x, y);
+    
+    gc.restore();
+  }
+
+  // Function to draw distance circle around a point
+  public drawDistanceCircle(
+    gc: CanvasRenderingContext2D,
+    lat: number,
+    lon: number,
+    maxDistanceKm: number
+  ) {
+    // Calculate the radius in canvas pixels
+    // We need to approximate: 1 degree of latitude ≈ 111 km
+    // So maxDistanceKm / 111 gives us degrees
+    const radiusInDegrees = maxDistanceKm / 111;
+    
+    // Get the center point in canvas coordinates
+    const center = this._model.latLonToCanvas(
+      lat,
+      lon,
+      this._map.width,
+      this._map.height
+    );
+    
+    // Calculate radius in canvas pixels
+    // We need to find a point that is radiusInDegrees away
+    const topPoint = this._model.latLonToCanvas(
+      lat + radiusInDegrees,
+      lon,
+      this._map.width,
+      this._map.height
+    );
+    const radiusPixels = Math.abs(topPoint.y - center.y);
+    
+    gc.save();
+    gc.translate(this._map.x, this._map.y);
+    
+    // Clip to map bounds
+    gc.beginPath();
+    gc.rect(0, 0, this._map.width || 0, this._map.height || 0);
+    gc.clip();
+    
+    // Draw semi-transparent circle
+    gc.beginPath();
+    gc.arc(center.x, center.y, radiusPixels, 0, 2 * Math.PI);
+    gc.strokeStyle = "rgba(100, 150, 255, 0.5)";
+    gc.fillStyle = "rgba(100, 150, 255, 0.1)";
+    gc.lineWidth = 2;
+    gc.fill();
+    gc.stroke();
+    gc.closePath();
+    
+    gc.restore();
+  }
+
   // Function to draw label text for a marker
   // Separated from marker drawing to ensure labels appear on top
   // Ensures labels always stay within map bounds
@@ -180,6 +268,41 @@ export class MapWidgetView {
         );
       }
     });
+
+    // Draw distance circles and selection points (if distance filter is active)
+    // Access selection points and max distance from map widget (will be added in Step 2.4)
+    const mapWidget = this._map as any;
+    if (mapWidget.selectionPoint1 && mapWidget.maxDistance) {
+      this.drawDistanceCircle(
+        gc,
+        mapWidget.selectionPoint1.latitude,
+        mapWidget.selectionPoint1.longitude,
+        mapWidget.maxDistance
+      );
+      this.drawSelectionPoint(
+        gc,
+        mapWidget.selectionPoint1.latitude,
+        mapWidget.selectionPoint1.longitude,
+        1,
+        "#0066cc" // Blue for point 1
+      );
+    }
+    
+    if (mapWidget.selectionPoint2 && mapWidget.maxDistance) {
+      this.drawDistanceCircle(
+        gc,
+        mapWidget.selectionPoint2.latitude,
+        mapWidget.selectionPoint2.longitude,
+        mapWidget.maxDistance
+      );
+      this.drawSelectionPoint(
+        gc,
+        mapWidget.selectionPoint2.latitude,
+        mapWidget.selectionPoint2.longitude,
+        2,
+        "#00cc66" // Green for point 2
+      );
+    }
 
     //draw the border if there is one
     if (this._map.border) {
