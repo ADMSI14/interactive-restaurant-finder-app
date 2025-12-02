@@ -17,6 +17,9 @@ export class Slider extends SKElement {
     private _model: SliderModel;
     private _view: SliderView;
     private _controller: SliderController;
+    
+    // Callback for when slider value changes
+    public onChange: ((value: number) => void) | null = null;
 
     // Custom colors
     protected _highlightColour = Style.highlightColour;

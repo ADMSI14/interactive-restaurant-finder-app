@@ -15,7 +15,7 @@ export class SliderController {
     }
 
     handleMouseEvent(me: SKMouseEvent) {
-        const width = this._slider.width;
+        const width = this._slider.width || 200;
         const TRACK_PADDING = 10;
         const trackStartX = TRACK_PADDING;
         const trackEndX = width - TRACK_PADDING;
@@ -34,6 +34,11 @@ export class SliderController {
                 this._model.value = newValue;
                 this._model.state = "dragging";
                 this._isDragging = true;
+
+                // Call the onChange callback if it's set
+                if (this._slider.onChange) {
+                    this._slider.onChange(this._model.value);
+                }
 
                 // Trigger action event
                 if (
@@ -54,6 +59,11 @@ export class SliderController {
                     
                     this._model.value = newValue;
                     this._model.state = "dragging";
+
+                    // Call the onChange callback if it's set (for continuous updates)
+                    if (this._slider.onChange) {
+                        this._slider.onChange(this._model.value);
+                    }
 
                     // Trigger action event for continuous updates
                     this._slider.sendEvent({

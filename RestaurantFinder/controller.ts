@@ -337,8 +337,15 @@ export class RestaurantFinderController {
             console.log("Distance filter checkbox onChange callback set");
         }
         
-        // Note: Max distance slider uses action events (handled in handleWidgetAction)
-        // No direct onChange callback needed
+        // Set up max distance slider onChange callback
+        const maxDistanceSlider = this._view.maxDistanceSlider;
+        if (maxDistanceSlider) {
+            maxDistanceSlider.onChange = (value: number) => {
+                console.log(`Max distance slider onChange callback: ${value}`);
+                this.handleMaxDistanceChange(value);
+            };
+            console.log("Max distance slider onChange callback set");
+        }
         
         // Initialize slider bounds with actual data ranges
         const dataRanges = this._model.getDataRanges();
