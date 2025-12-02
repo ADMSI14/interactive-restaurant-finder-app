@@ -60,21 +60,42 @@ export class MapWidgetView {
     gc.save();
     gc.translate(this._map.x, this._map.y);
     
-    // Draw outer circle
+    // Clip to map bounds
     gc.beginPath();
-    gc.arc(x, y, 8, 0, 2 * Math.PI);
+    gc.rect(0, 0, this._map.width || 0, this._map.height || 0);
+    gc.clip();
+    
+    const radius = 10; // Larger radius for better visibility
+    
+    // Draw shadow/outline for better visibility against any background
+    gc.beginPath();
+    gc.arc(x, y, radius + 2, 0, 2 * Math.PI);
+    gc.fillStyle = "rgba(0, 0, 0, 0.3)";
+    gc.fill();
+    
+    // Draw outer circle with main color
+    gc.beginPath();
+    gc.arc(x, y, radius, 0, 2 * Math.PI);
     gc.fillStyle = color;
     gc.fill();
+    
+    // Draw white border for contrast
     gc.strokeStyle = "white";
-    gc.lineWidth = 2;
+    gc.lineWidth = 2.5;
     gc.stroke();
     gc.closePath();
     
-    // Draw number label
-    gc.fillStyle = "white";
-    gc.font = "bold 12px Arial";
+    // Draw number label with shadow for better readability
+    gc.font = "bold 13px Arial";
     gc.textAlign = "center";
     gc.textBaseline = "middle";
+    
+    // Draw text shadow
+    gc.fillStyle = "rgba(0, 0, 0, 0.5)";
+    gc.fillText(pointNumber.toString(), x + 1, y + 1);
+    
+    // Draw text
+    gc.fillStyle = "white";
     gc.fillText(pointNumber.toString(), x, y);
     
     gc.restore();
@@ -85,7 +106,8 @@ export class MapWidgetView {
     gc: CanvasRenderingContext2D,
     lat: number,
     lon: number,
-    maxDistanceKm: number
+    maxDistanceKm: number,
+    color: string = "#0066cc" // Default blue, can be customized per point
   ) {
     // Calculate the radius in canvas pixels
     // We need to approximate: 1 degree of latitude ≈ 111 km
@@ -118,14 +140,34 @@ export class MapWidgetView {
     gc.rect(0, 0, this._map.width || 0, this._map.height || 0);
     gc.clip();
     
-    // Draw semi-transparent circle
+    // Convert hex color to rgba for transparency
+    const hexToRgba = (hex: string, alpha: number) => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+    
+    // Draw semi-transparent filled circle
     gc.beginPath();
     gc.arc(center.x, center.y, radiusPixels, 0, 2 * Math.PI);
-    gc.strokeStyle = "rgba(100, 150, 255, 0.5)";
-    gc.fillStyle = "rgba(100, 150, 255, 0.1)";
-    gc.lineWidth = 2;
+    gc.fillStyle = hexToRgba(color, 0.15); // Light fill
     gc.fill();
+    
+    // Draw border circle with more opacity
+    gc.strokeStyle = hexToRgba(color, 0.6); // More visible border
+    gc.lineWidth = 2.5;
     gc.stroke();
+    gc.closePath();
+    
+    // Draw dashed inner circle for better visual reference
+    gc.beginPath();
+    gc.setLineDash([5, 5]);
+    gc.arc(center.x, center.y, radiusPixels, 0, 2 * Math.PI);
+    gc.strokeStyle = hexToRgba(color, 0.3);
+    gc.lineWidth = 1;
+    gc.stroke();
+    gc.setLineDash([]); // Reset line dash
     gc.closePath();
     
     gc.restore();
@@ -270,19 +312,24 @@ export class MapWidgetView {
     });
 
     // Draw distance circles and selection points (if distance filter is active)
+    // Draw circles first, then points on top for proper z-ordering
+    const point1Color = "#0066cc"; // Blue for point 1
+    const point2Color = "#00cc66"; // Green for point 2
+    
     if (this._map.selectionPoint1 && this._map.maxDistance) {
       this.drawDistanceCircle(
         gc,
         this._map.selectionPoint1.latitude,
         this._map.selectionPoint1.longitude,
-        this._map.maxDistance
+        this._map.maxDistance,
+        point1Color
       );
       this.drawSelectionPoint(
         gc,
         this._map.selectionPoint1.latitude,
         this._map.selectionPoint1.longitude,
         1,
-        "#0066cc" // Blue for point 1
+        point1Color
       );
     }
     
@@ -291,14 +338,15 @@ export class MapWidgetView {
         gc,
         this._map.selectionPoint2.latitude,
         this._map.selectionPoint2.longitude,
-        this._map.maxDistance
+        this._map.maxDistance,
+        point2Color
       );
       this.drawSelectionPoint(
         gc,
         this._map.selectionPoint2.latitude,
         this._map.selectionPoint2.longitude,
         2,
-        "#00cc66" // Green for point 2
+        point2Color
       );
     }
 
