@@ -202,6 +202,34 @@ export class RestaurantFinderModel {
             });
         }
 
+        // Filter by distance (if distance filter is enabled and both points are set)
+        // Uses OR logic - restaurant must be within maxDistance of either point
+        if (this._filterState.distanceFilterEnabled && 
+            this._filterState.point1 !== null && 
+            this._filterState.point2 !== null) {
+            filtered = filtered.filter(r => {
+                // Calculate distance from restaurant to point1
+                const distanceToPoint1 = RestaurantFinderModel.calculateDistance(
+                    r.latitude,
+                    r.longitude,
+                    this._filterState.point1!.latitude,
+                    this._filterState.point1!.longitude
+                );
+                
+                // Calculate distance from restaurant to point2
+                const distanceToPoint2 = RestaurantFinderModel.calculateDistance(
+                    r.latitude,
+                    r.longitude,
+                    this._filterState.point2!.latitude,
+                    this._filterState.point2!.longitude
+                );
+                
+                // Restaurant is included if within maxDistance of either point (OR logic)
+                return distanceToPoint1 <= this._filterState.maxDistance || 
+                       distanceToPoint2 <= this._filterState.maxDistance;
+            });
+        }
+
         // Update filtered restaurants list
         this._filteredRestaurants = filtered;
     }
