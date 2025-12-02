@@ -30,6 +30,13 @@ export class MapWidgetController {
       let hoveredPoint: MapPoint | null = null;
       let clickHandled = false;
       
+      // Check if click is within map bounds
+      const isWithinMapBounds = 
+        me.x >= this._map.x && 
+        me.x <= this._map.x + (this._map.width || 0) &&
+        me.y >= this._map.y && 
+        me.y <= this._map.y + (this._map.height || 0);
+      
       // First pass: find the hovered point and set its dataDisplay
       this._model.points.forEach((p) => {
             const { x, y } = this._model.latLonToCanvas(
@@ -90,6 +97,34 @@ export class MapWidgetController {
               }
             }
       });
+      
+      // Handle clicks on empty map area (not on a restaurant marker)
+      if (me.type === "click" && isWithinMapBounds && !clickHandled) {
+        // Convert canvas coordinates to map-relative coordinates
+        const mapRelativeX = me.x - this._map.x;
+        const mapRelativeY = me.y - this._map.y;
+        
+        // Convert to lat/long coordinates
+        const { latitude, longitude } = this._model.canvasToLatLon(
+          mapRelativeX,
+          mapRelativeY,
+          this._map.width,
+          this._map.height
+        );
+        
+        console.log(`MapWidgetController: Click detected on empty map area at (${latitude}, ${longitude})`);
+        
+        // Send map-click event with lat/long coordinates
+        const mapClickEvent = {
+          source: this,
+          timeStamp: me.timeStamp,
+          type: "map-click",
+          data: { latitude, longitude }
+        } as SKEvent;
+        this._map.sendEvent(mapClickEvent);
+        
+        clickHandled = true;
+      }
       
       // Second pass: clear dataDisplay for all non-hovered points
       this._model.points.forEach((p) => {
