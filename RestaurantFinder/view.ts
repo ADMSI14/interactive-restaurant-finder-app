@@ -132,11 +132,27 @@ export class RestaurantFinderView {
         });
         this._container.addChild(this._filtersContainer);
 
+        // Result count label - positioned at top center, above other elements
+        const resultCountLabelWidth = 200;
+        const filtersContainerWidth = this._filtersContainer.width || 1238;
+        this._resultCountLabel = new SKLabel({
+            text: `Showing: 0 restaurants`,
+            x: (filtersContainerWidth / 2) - (resultCountLabelWidth / 2),  // Centered horizontally
+            y: this.FILTER_PANEL_PADDING,  // At the top
+            width: resultCountLabelWidth,
+            height: 16
+        });
+        this._resultCountLabel.font = this.FONTS.SECTION_TITLE;  // Larger font for better visibility
+        this._resultCountLabel.fill = "";  // No background fill
+        this._resultCountLabel.fontColour = this.COLORS.PRIMARY_TEXT;  // Use primary text color for emphasis
+        this._filtersContainer.addChild(this._resultCountLabel);
+
         // Cost Range Filter Section - Left side of filter panel
+        // Positioned below result count label
         const costTitle = new SKLabel({
             text: "Cost Range ($):",
             x: this.FILTER_PANEL_PADDING + 60,  // Moved 10px to the right
-            y: this.FILTER_PANEL_PADDING,
+            y: this.FILTER_PANEL_PADDING + 25,  // Below result count
             width: 120,
             height: 20
         });
@@ -152,7 +168,7 @@ export class RestaurantFinderView {
             min: 0,
             max: 1000,
             x: this.FILTER_PANEL_PADDING + 60,  // Moved 10px to the right
-            y: this.FILTER_PANEL_PADDING + 25,
+            y: this.FILTER_PANEL_PADDING + 50,  // Below title
             width: 300,  // Increased width to make slider longer
             height: 20,
             trackColor: "#cccccc",
@@ -166,7 +182,7 @@ export class RestaurantFinderView {
         this._costRangeLabel = new SKLabel({
             text: "$0 - $1000",
             x: this.FILTER_PANEL_PADDING + 60 + 300 + 10,  // To the right of the slider
-            y: this.FILTER_PANEL_PADDING + 25,
+            y: this.FILTER_PANEL_PADDING + 50,  // Aligned with slider
             width: 120,
             height: 20
         });
@@ -179,7 +195,7 @@ export class RestaurantFinderView {
         const ratingTitle = new SKLabel({
             text: "Rating Range:",
             x: this.FILTER_PANEL_PADDING + 60,  // Moved 10px to the right
-            y: this.FILTER_PANEL_PADDING + 60,
+            y: this.FILTER_PANEL_PADDING + 85,  // Below cost slider with spacing
             width: 120,
             height: 20
         });
@@ -195,7 +211,7 @@ export class RestaurantFinderView {
             min: 0,
             max: 5,
             x: this.FILTER_PANEL_PADDING + 60,  // Moved 10px to the right
-            y: this.FILTER_PANEL_PADDING + 85,
+            y: this.FILTER_PANEL_PADDING + 110,  // Below title
             width: 300,  // Increased width to make slider longer
             height: 20,
             trackColor: "#cccccc",
@@ -209,7 +225,7 @@ export class RestaurantFinderView {
         this._ratingRangeLabel = new SKLabel({
             text: "0.0 - 5.0",
             x: this.FILTER_PANEL_PADDING + 60 + 300 + 10,  // To the right of the slider
-            y: this.FILTER_PANEL_PADDING + 85,
+            y: this.FILTER_PANEL_PADDING + 110,  // Aligned with slider
             width: 120,
             height: 20
         });
@@ -218,9 +234,9 @@ export class RestaurantFinderView {
         this._ratingRangeLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._ratingRangeLabel);
 
-        // Distance Filter Section - Positioned to the right of rating range
+        // Distance Filter Section - Positioned in middle column, starting at top with cost/rating
         const distanceFilterX = this.FILTER_PANEL_PADDING + 60 + 300 + 10 + 120 + 60; // After rating range label
-        const distanceFilterY = this.FILTER_PANEL_PADDING;
+        const distanceFilterY = this.FILTER_PANEL_PADDING + 25; // Start at same level as cost range title
         
         // Distance Filter Title
         const distanceFilterTitle = new SKLabel({
@@ -239,7 +255,7 @@ export class RestaurantFinderView {
         this._distanceFilterCheckbox = new CheckBox({
             checked: false,
             x: distanceFilterX,
-            y: distanceFilterY + 25,
+            y: distanceFilterY + 22,  // Reduced spacing
             width: 20,
             height: 20
         });
@@ -249,7 +265,7 @@ export class RestaurantFinderView {
         this._distanceFilterLabel = new SKLabel({
             text: "Enable distance filter",
             x: distanceFilterX + 25,
-            y: distanceFilterY + 25,
+            y: distanceFilterY + 22,  // Reduced spacing
             width: 150,
             height: 20
         });
@@ -262,7 +278,7 @@ export class RestaurantFinderView {
         const maxDistanceTitle = new SKLabel({
             text: "Max Distance (km):",
             x: distanceFilterX,
-            y: distanceFilterY + 50,
+            y: distanceFilterY + 45,  // Reduced spacing
             width: 130,
             height: 20
         });
@@ -276,7 +292,7 @@ export class RestaurantFinderView {
             min: 1,
             max: 20, // Allow up to 20 km
             x: distanceFilterX,
-            y: distanceFilterY + 75,
+            y: distanceFilterY + 67,  // Reduced spacing
             width: 200,
             height: 20,
             trackColor: "#cccccc",
@@ -288,7 +304,7 @@ export class RestaurantFinderView {
         this._maxDistanceLabel = new SKLabel({
             text: "5 km",
             x: distanceFilterX + 200 + 10,
-            y: distanceFilterY + 75,
+            y: distanceFilterY + 67,  // Aligned with slider
             width: 60,
             height: 20
         });
@@ -297,13 +313,13 @@ export class RestaurantFinderView {
         this._maxDistanceLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._maxDistanceLabel);
 
-        // Point Status Labels
+        // Point Status Labels - Compact spacing
         this._point1StatusLabel = new SKLabel({
             text: "Point 1: Not selected",
             x: distanceFilterX,
-            y: distanceFilterY + 100,
+            y: distanceFilterY + 90,  // Reduced spacing
             width: 180,
-            height: 20
+            height: 18  // Slightly smaller height
         });
         this._point1StatusLabel.font = this.FONTS.SMALL;
         this._point1StatusLabel.fill = "";
@@ -313,9 +329,9 @@ export class RestaurantFinderView {
         this._point2StatusLabel = new SKLabel({
             text: "Point 2: Not selected",
             x: distanceFilterX,
-            y: distanceFilterY + 115,
+            y: distanceFilterY + 108,  // Reduced spacing
             width: 180,
-            height: 20
+            height: 18  // Slightly smaller height
         });
         this._point2StatusLabel.font = this.FONTS.SMALL;
         this._point2StatusLabel.fill = "";
@@ -326,9 +342,9 @@ export class RestaurantFinderView {
         this._clearPointsLabel = new SKLabel({
             text: "Click map to select points",
             x: distanceFilterX,
-            y: distanceFilterY + 130,
+            y: distanceFilterY + 126,  // Reduced spacing
             width: 180,
-            height: 20
+            height: 16  // Smaller height
         });
         this._clearPointsLabel.font = this.FONTS.TINY;
         this._clearPointsLabel.fill = "";
@@ -348,8 +364,8 @@ export class RestaurantFinderView {
         const featuresSectionWidth = 200;
         const featuresX = (detailsX + (this.DETAILS_PANEL_WIDTH / 2)) - this.MARGIN - (featuresSectionWidth / 2);
         
-        // Position Features at the top of filters container (below details container visually)
-        const featuresY = this.FILTER_PANEL_PADDING;
+        // Position Features below result count label to avoid overlap
+        const featuresY = this.FILTER_PANEL_PADDING + 25;
         
         const featuresTitle = new SKLabel({
             text: "Features:",
@@ -405,23 +421,6 @@ export class RestaurantFinderView {
             
             featureCheckboxY += 25;  // Consistent spacing between features
         });
-
-        
-        // Add result count label (will be updated dynamically)
-        // Positioned at top center of filters container
-        const resultCountLabelWidth = 200;
-        const filtersContainerWidth = this._filtersContainer.width || 1238;
-        this._resultCountLabel = new SKLabel({
-            text: `Showing: 0 restaurants`,
-            x: (filtersContainerWidth / 2) - (resultCountLabelWidth / 2),  // Centered horizontally
-            y: this.FILTER_PANEL_PADDING,  // At the top
-            width: resultCountLabelWidth,
-            height: 16
-        });
-        this._resultCountLabel.font = this.FONTS.SECTION_TITLE;  // Larger font for better visibility
-        this._resultCountLabel.fill = "";  // No background fill
-        this._resultCountLabel.fontColour = this.COLORS.PRIMARY_TEXT;  // Use primary text color for emphasis
-        this._filtersContainer.addChild(this._resultCountLabel);
     }
 
     // Update cost range display from model
