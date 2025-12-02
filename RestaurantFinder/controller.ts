@@ -415,11 +415,18 @@ export class RestaurantFinderController {
         this._view.updateMap(this._model.filteredRestaurants);
         
         // Update map widget with distance filter selection state
+        // Only show selection points if distance filter is enabled
         const mapWidget = this._view.mapWidget;
         if (mapWidget) {
             const filterState = this._model.filterState;
-            mapWidget.selectionPoint1 = filterState.point1;
-            mapWidget.selectionPoint2 = filterState.point2;
+            if (filterState.distanceFilterEnabled) {
+                mapWidget.selectionPoint1 = filterState.point1;
+                mapWidget.selectionPoint2 = filterState.point2;
+            } else {
+                // Hide selection points when filter is disabled
+                mapWidget.selectionPoint1 = null;
+                mapWidget.selectionPoint2 = null;
+            }
             mapWidget.maxDistance = filterState.maxDistance;
         }
         
@@ -512,7 +519,7 @@ export class RestaurantFinderController {
         
         // Edge case: If enabling but no points are set, allow it but filter won't apply until points are set
         // The filter logic already handles this by checking if both points exist
-        // When disabling, keep the points (they'll just be inactive)
+        // When disabling, hide the selection points on the map
         
         this._model.setDistanceFilterEnabled(enabled);
         
@@ -535,7 +542,14 @@ export class RestaurantFinderController {
             mapWidget.maxDistance = filterState.maxDistance;
         }
         
-        // Update map with filtered results
+        // Update view selection points display
+        // Keep showing the points in labels (so users know they're saved) but they won't appear on map when disabled
+        this._view.updateSelectionPoints(
+            filterState.point1,
+            filterState.point2
+        );
+        
+        // Update map with filtered results (this will trigger a redraw)
         this.updateView();
     }
 
