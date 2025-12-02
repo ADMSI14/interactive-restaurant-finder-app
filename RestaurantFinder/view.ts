@@ -95,12 +95,28 @@ export class RestaurantFinderView {
 
     // Create application header/title
     private createHeader(): void {
+        // Calculate total width of the three main containers
+        const mapLayout = this.getMapLayout();
+        const mapWidth = mapLayout.width;
+        const detailsWidth = this.DETAILS_PANEL_WIDTH; // 410
+        const rightSideWidth = 250;
+        const totalWidth = mapWidth + detailsWidth + rightSideWidth;
+        
+        // Calculate the halfway point (center) of the total width
+        // Map starts at MARGIN, so center is at MARGIN + (totalWidth / 2)
+        const centerX = this.MARGIN + (totalWidth / 2);
+        
+        // Position title label centered at this point
+        const headerWidth = 300;
+        const headerX = centerX - (headerWidth / 2);
+        
         const header = new SKLabel({
             text: "Restaurant Finder",
-            x: this.MARGIN,
+            x: headerX,
             y: this.MARGIN,
-            width: 760,
-            height: this.HEADER_HEIGHT
+            width: headerWidth,
+            height: this.HEADER_HEIGHT,
+            align: "centre"  // Center align the text within the label
         });
         header.font = this.FONTS.HEADER;
         header.fill = "";  // No background fill
