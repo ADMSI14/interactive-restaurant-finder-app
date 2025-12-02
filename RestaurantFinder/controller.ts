@@ -407,6 +407,15 @@ export class RestaurantFinderController {
         // Update map with filtered restaurants
         this._view.updateMap(this._model.filteredRestaurants);
         
+        // Update map widget with distance filter selection state
+        const mapWidget = this._view.mapWidget;
+        if (mapWidget) {
+            const filterState = this._model.filterState;
+            mapWidget.selectionPoint1 = filterState.point1;
+            mapWidget.selectionPoint2 = filterState.point2;
+            mapWidget.maxDistance = filterState.maxDistance;
+        }
+        
         // Update result count for clarity
         this._view.updateResultCount(this._model.filteredRestaurants.length);
         
