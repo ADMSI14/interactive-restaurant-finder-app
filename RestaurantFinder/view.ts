@@ -1,6 +1,6 @@
 import { SKContainer, SKLabel } from "../simplekit/src/imperative-mode";
 import { MapWidget, MapPoint } from "../widgets/MapWidget";
-import { RangeSlider } from "../widgets/slider";
+import { RangeSlider, Slider } from "../widgets/slider";
 import { RadioButton, RadioButtonGroup } from "../widgets/radiobutton";
 import { CheckBox } from "../widgets/checkbox";
 import { Restaurant } from "./model";
@@ -21,6 +21,13 @@ export class RestaurantFinderView {
     private _typeLabels: Map<string, SKLabel> = new Map();
     private _featureCheckboxes: Map<string, CheckBox> = new Map();
     private _resultCountLabel: SKLabel | null = null;
+    private _distanceFilterCheckbox: CheckBox | null = null;
+    private _distanceFilterLabel: SKLabel | null = null;
+    private _maxDistanceSlider: Slider | null = null;
+    private _maxDistanceLabel: SKLabel | null = null;
+    private _point1StatusLabel: SKLabel | null = null;
+    private _point2StatusLabel: SKLabel | null = null;
+    private _clearPointsLabel: SKLabel | null = null;
     
     // Reference to controller for event handling (set after construction)
     private _controller: any = null;
@@ -209,6 +216,123 @@ export class RestaurantFinderView {
         this._ratingRangeLabel.fill = "";  // No background fill
         this._ratingRangeLabel.fontColour = this.COLORS.SECONDARY_TEXT;
         this._filtersContainer.addChild(this._ratingRangeLabel);
+
+        // Distance Filter Section - Positioned to the right of rating range
+        const distanceFilterX = this.FILTER_PANEL_PADDING + 60 + 300 + 10 + 120 + 60; // After rating range label
+        const distanceFilterY = this.FILTER_PANEL_PADDING;
+        
+        // Distance Filter Title
+        const distanceFilterTitle = new SKLabel({
+            text: "Distance Filter:",
+            x: distanceFilterX,
+            y: distanceFilterY,
+            width: 120,
+            height: 20
+        });
+        distanceFilterTitle.font = this.FONTS.FILTER_TITLE;
+        distanceFilterTitle.fill = "";
+        distanceFilterTitle.fontColour = this.COLORS.PRIMARY_TEXT;
+        this._filtersContainer.addChild(distanceFilterTitle);
+
+        // Enable Distance Filter Checkbox
+        this._distanceFilterCheckbox = new CheckBox({
+            checked: false,
+            x: distanceFilterX,
+            y: distanceFilterY + 25,
+            width: 20,
+            height: 20
+        });
+        this._filtersContainer.addChild(this._distanceFilterCheckbox);
+
+        // Distance Filter Label
+        this._distanceFilterLabel = new SKLabel({
+            text: "Enable distance filter",
+            x: distanceFilterX + 25,
+            y: distanceFilterY + 25,
+            width: 150,
+            height: 20
+        });
+        this._distanceFilterLabel.font = this.FONTS.BODY;
+        this._distanceFilterLabel.fill = "";
+        this._distanceFilterLabel.fontColour = this.COLORS.SECONDARY_TEXT;
+        this._filtersContainer.addChild(this._distanceFilterLabel);
+
+        // Max Distance Slider
+        const maxDistanceTitle = new SKLabel({
+            text: "Max Distance (km):",
+            x: distanceFilterX,
+            y: distanceFilterY + 50,
+            width: 130,
+            height: 20
+        });
+        maxDistanceTitle.font = this.FONTS.FILTER_TITLE;
+        maxDistanceTitle.fill = "";
+        maxDistanceTitle.fontColour = this.COLORS.PRIMARY_TEXT;
+        this._filtersContainer.addChild(maxDistanceTitle);
+
+        this._maxDistanceSlider = new Slider({
+            value: 5,
+            min: 1,
+            max: 20, // Allow up to 20 km
+            x: distanceFilterX,
+            y: distanceFilterY + 75,
+            width: 200,
+            height: 20,
+            trackColor: "#cccccc",
+            thumbColor: "#0066cc"
+        });
+        this._filtersContainer.addChild(this._maxDistanceSlider);
+
+        // Max Distance Value Label
+        this._maxDistanceLabel = new SKLabel({
+            text: "5 km",
+            x: distanceFilterX + 200 + 10,
+            y: distanceFilterY + 75,
+            width: 60,
+            height: 20
+        });
+        this._maxDistanceLabel.font = this.FONTS.BODY;
+        this._maxDistanceLabel.fill = "";
+        this._maxDistanceLabel.fontColour = this.COLORS.SECONDARY_TEXT;
+        this._filtersContainer.addChild(this._maxDistanceLabel);
+
+        // Point Status Labels
+        this._point1StatusLabel = new SKLabel({
+            text: "Point 1: Not selected",
+            x: distanceFilterX,
+            y: distanceFilterY + 100,
+            width: 180,
+            height: 20
+        });
+        this._point1StatusLabel.font = this.FONTS.SMALL;
+        this._point1StatusLabel.fill = "";
+        this._point1StatusLabel.fontColour = this.COLORS.MUTED_TEXT;
+        this._filtersContainer.addChild(this._point1StatusLabel);
+
+        this._point2StatusLabel = new SKLabel({
+            text: "Point 2: Not selected",
+            x: distanceFilterX,
+            y: distanceFilterY + 115,
+            width: 180,
+            height: 20
+        });
+        this._point2StatusLabel.font = this.FONTS.SMALL;
+        this._point2StatusLabel.fill = "";
+        this._point2StatusLabel.fontColour = this.COLORS.MUTED_TEXT;
+        this._filtersContainer.addChild(this._point2StatusLabel);
+
+        // Clear Points Label (clickable instruction)
+        this._clearPointsLabel = new SKLabel({
+            text: "Click map to select points",
+            x: distanceFilterX,
+            y: distanceFilterY + 130,
+            width: 180,
+            height: 20
+        });
+        this._clearPointsLabel.font = this.FONTS.TINY;
+        this._clearPointsLabel.fill = "";
+        this._clearPointsLabel.fontColour = this.COLORS.MUTED_TEXT;
+        this._filtersContainer.addChild(this._clearPointsLabel);
 
         // Note: Restaurant Type section has been moved to the right-side container
 
@@ -488,6 +612,14 @@ export class RestaurantFinderView {
 
     public get featureCheckboxes(): Map<string, CheckBox> {
         return this._featureCheckboxes;
+    }
+
+    public get distanceFilterCheckbox(): CheckBox | null {
+        return this._distanceFilterCheckbox;
+    }
+
+    public get maxDistanceSlider(): Slider | null {
+        return this._maxDistanceSlider;
     }
 
     // Convert Restaurant to MapPoint format for MapWidget
