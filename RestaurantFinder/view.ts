@@ -302,8 +302,12 @@ export class RestaurantFinderView {
     // Update cost range display from model
     public updateCostRange(minCost: number, maxCost: number): void {
         if (this._costRangeSlider) {
-            this._costRangeSlider.minValue = minCost;
-            this._costRangeSlider.maxValue = maxCost;
+            // Only update if slider is not currently being dragged to avoid freezing
+            const isDragging = (this._costRangeSlider as any)._controller?._isDragging || false;
+            if (!isDragging) {
+                this._costRangeSlider.minValue = minCost;
+                this._costRangeSlider.maxValue = maxCost;
+            }
         }
         // Update cost range label
         if (this._costRangeLabel) {
@@ -322,8 +326,12 @@ export class RestaurantFinderView {
     // Update rating range display from model
     public updateRatingRange(minRating: number, maxRating: number): void {
         if (this._ratingRangeSlider) {
-            this._ratingRangeSlider.minValue = minRating;
-            this._ratingRangeSlider.maxValue = maxRating;
+            // Only update if slider is not currently being dragged to avoid freezing
+            const isDragging = (this._ratingRangeSlider as any)._controller?._isDragging || false;
+            if (!isDragging) {
+                this._ratingRangeSlider.minValue = minRating;
+                this._ratingRangeSlider.maxValue = maxRating;
+            }
         }
         // Update rating range label
         if (this._ratingRangeLabel) {

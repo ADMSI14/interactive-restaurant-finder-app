@@ -20,6 +20,10 @@ export interface FilterState {
     maxRating: number;
     selectedType: string | null;
     selectedFeatures: string[];
+    point1: { latitude: number; longitude: number } | null;
+    point2: { latitude: number; longitude: number } | null;
+    maxDistance: number; // in kilometers
+    distanceFilterEnabled: boolean;
 }
 
 export class RestaurantFinderModel {
@@ -34,7 +38,11 @@ export class RestaurantFinderModel {
         minRating: 0,
         maxRating: 5,
         selectedType: null,
-        selectedFeatures: []
+        selectedFeatures: [],
+        point1: null,
+        point2: null,
+        maxDistance: 5, // Default 5 km
+        distanceFilterEnabled: false
     };
 
     constructor() {
