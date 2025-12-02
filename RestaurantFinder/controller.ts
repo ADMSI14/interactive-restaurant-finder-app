@@ -136,6 +136,22 @@ export class RestaurantFinderController {
                 return;
             }
         });
+        
+        // Check if event is from distance filter checkbox
+        const distanceFilterCheckbox = this._view.distanceFilterCheckbox;
+        if (distanceFilterCheckbox && (distanceFilterCheckbox as any)._controller === source) {
+            console.log("handleWidgetAction: Event from distance filter checkbox");
+            this.handleDistanceFilterToggle(distanceFilterCheckbox.checked);
+            return;
+        }
+        
+        // Check if event is from max distance slider
+        const maxDistanceSlider = this._view.maxDistanceSlider;
+        if (maxDistanceSlider && (maxDistanceSlider as any)._controller === source) {
+            console.log("handleWidgetAction: Event from max distance slider");
+            this.handleMaxDistanceChange(maxDistanceSlider.value);
+            return;
+        }
     }
 
     // Handle hover event on map marker
@@ -311,6 +327,19 @@ export class RestaurantFinderController {
             console.log("Rating range slider onChange callback set");
         }
         
+        // Set up distance filter checkbox onChange callback
+        const distanceFilterCheckbox = this._view.distanceFilterCheckbox;
+        if (distanceFilterCheckbox) {
+            distanceFilterCheckbox.onChange = (checked: boolean) => {
+                console.log(`Distance filter checkbox onChange callback: ${checked}`);
+                this.handleDistanceFilterToggle(checked);
+            };
+            console.log("Distance filter checkbox onChange callback set");
+        }
+        
+        // Note: Max distance slider uses action events (handled in handleWidgetAction)
+        // No direct onChange callback needed
+        
         // Initialize slider bounds with actual data ranges
         const dataRanges = this._model.getDataRanges();
         this._view.updateCostRangeBounds(dataRanges.minCost, dataRanges.maxCost);
@@ -352,6 +381,22 @@ export class RestaurantFinderController {
         this._view.updateRatingRange(filterState.minRating, filterState.maxRating);
         this._view.updateRestaurantType(filterState.selectedType);
         this._view.updateFeatures(filterState.selectedFeatures);
+        
+        // Initialize distance filter display
+        this._view.updateDistanceFilterState(
+            filterState.distanceFilterEnabled,
+            filterState.point1,
+            filterState.point2,
+            filterState.maxDistance
+        );
+        
+        // Initialize map widget with distance filter state
+        if (mapWidget) {
+            mapWidget.selectionPoint1 = filterState.point1;
+            mapWidget.selectionPoint2 = filterState.point2;
+            mapWidget.maxDistance = filterState.maxDistance;
+        }
+        
         // Initialize result count
         this._view.updateResultCount(this._model.filteredRestaurants.length);
     }
@@ -441,6 +486,69 @@ export class RestaurantFinderController {
         this._model.setSelectedFeatures(selectedFeatures);
         // Update view display
         this._view.updateFeatures(selectedFeatures);
+        // Update map with filtered results
+        this.updateView();
+    }
+
+    // Handle distance filter toggle (enable/disable)
+    public handleDistanceFilterToggle(enabled: boolean): void {
+        console.log("handleDistanceFilterToggle called, enabled:", enabled);
+        this._model.setDistanceFilterEnabled(enabled);
+        
+        // Update view display
+        const filterState = this._model.filterState;
+        this._view.updateDistanceFilterEnabled(enabled);
+        
+        // Update map widget with selection points and max distance
+        const mapWidget = this._view.mapWidget;
+        if (mapWidget) {
+            mapWidget.selectionPoint1 = filterState.point1;
+            mapWidget.selectionPoint2 = filterState.point2;
+            mapWidget.maxDistance = filterState.maxDistance;
+        }
+        
+        // Update map with filtered results
+        this.updateView();
+    }
+
+    // Handle max distance change
+    public handleMaxDistanceChange(km: number): void {
+        console.log("handleMaxDistanceChange called, km:", km);
+        this._model.setMaxDistance(km);
+        
+        // Update view display
+        const filterState = this._model.filterState;
+        this._view.updateMaxDistance(filterState.maxDistance);
+        
+        // Update map widget with new max distance
+        const mapWidget = this._view.mapWidget;
+        if (mapWidget) {
+            mapWidget.maxDistance = filterState.maxDistance;
+        }
+        
+        // Update map with filtered results
+        this.updateView();
+    }
+
+    // Handle clear distance points
+    public handleClearDistancePoints(): void {
+        console.log("handleClearDistancePoints called");
+        this._model.clearDistancePoints();
+        
+        // Update view display
+        const filterState = this._model.filterState;
+        this._view.updateSelectionPoints(
+            filterState.point1,
+            filterState.point2
+        );
+        
+        // Update map widget to clear selection points
+        const mapWidget = this._view.mapWidget;
+        if (mapWidget) {
+            mapWidget.selectionPoint1 = null;
+            mapWidget.selectionPoint2 = null;
+        }
+        
         // Update map with filtered results
         this.updateView();
     }
