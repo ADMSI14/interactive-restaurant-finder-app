@@ -197,30 +197,21 @@ export class RestaurantFinderModel {
 
     // Apply all filters to restaurants
     // This method applies all active filters in sequence to filter the restaurant list
+    // Optimized: Apply cheaper filters first, then expensive distance calculation
     public applyFilters(): void {
         // Start with all restaurants
         let filtered = [...this._allRestaurants];
 
-        // Filter by cost range (inclusive on both ends)
-        filtered = filtered.filter(
-            r => r.avg_price >= this._filterState.minCost && 
-                 r.avg_price <= this._filterState.maxCost
-        );
-
-        // Filter by rating range (inclusive on both ends)
-        filtered = filtered.filter(
-            r => r.ratings >= this._filterState.minRating && 
-                 r.ratings <= this._filterState.maxRating
-        );
-
-        // Filter by restaurant type (if a type is selected)
+        // Apply cheaper filters first to reduce the list before expensive distance calculations
+        
+        // Filter by restaurant type (if a type is selected) - very fast (string comparison)
         if (this._filterState.selectedType !== null && this._filterState.selectedType.trim() !== "") {
             filtered = filtered.filter(
                 r => r.type === this._filterState.selectedType
             );
         }
 
-        // Filter by features (restaurant must have ALL selected features)
+        // Filter by features (restaurant must have ALL selected features) - fast (array operations)
         // This uses AND logic - all selected features must be present
         if (this._filterState.selectedFeatures.length > 0) {
             filtered = filtered.filter(r => {
@@ -230,31 +221,55 @@ export class RestaurantFinderModel {
             });
         }
 
+        // Filter by cost range (inclusive on both ends) - fast (number comparison)
+        filtered = filtered.filter(
+            r => r.avg_price >= this._filterState.minCost && 
+                 r.avg_price <= this._filterState.maxCost
+        );
+
+        // Filter by rating range (inclusive on both ends) - fast (number comparison)
+        filtered = filtered.filter(
+            r => r.ratings >= this._filterState.minRating && 
+                 r.ratings <= this._filterState.maxRating
+        );
+
         // Filter by distance (if distance filter is enabled and both points are set)
+        // This is the most expensive operation, so do it last on the already-filtered list
         // Uses OR logic - restaurant must be within maxDistance of either point
         if (this._filterState.distanceFilterEnabled && 
             this._filterState.point1 !== null && 
             this._filterState.point2 !== null) {
+            // Cache point coordinates to avoid repeated property access
+            const point1Lat = this._filterState.point1.latitude;
+            const point1Lon = this._filterState.point1.longitude;
+            const point2Lat = this._filterState.point2.latitude;
+            const point2Lon = this._filterState.point2.longitude;
+            const maxDist = this._filterState.maxDistance;
+            
             filtered = filtered.filter(r => {
                 // Calculate distance from restaurant to point1
                 const distanceToPoint1 = RestaurantFinderModel.calculateDistance(
                     r.latitude,
                     r.longitude,
-                    this._filterState.point1!.latitude,
-                    this._filterState.point1!.longitude
+                    point1Lat,
+                    point1Lon
                 );
+                
+                // If already within range of point1, no need to check point2
+                if (distanceToPoint1 <= maxDist) {
+                    return true;
+                }
                 
                 // Calculate distance from restaurant to point2
                 const distanceToPoint2 = RestaurantFinderModel.calculateDistance(
                     r.latitude,
                     r.longitude,
-                    this._filterState.point2!.latitude,
-                    this._filterState.point2!.longitude
+                    point2Lat,
+                    point2Lon
                 );
                 
                 // Restaurant is included if within maxDistance of either point (OR logic)
-                return distanceToPoint1 <= this._filterState.maxDistance || 
-                       distanceToPoint2 <= this._filterState.maxDistance;
+                return distanceToPoint2 <= maxDist;
             });
         }
 

@@ -592,7 +592,10 @@ export class RestaurantFinderView {
     // Update distance filter enabled state
     public updateDistanceFilterEnabled(enabled: boolean): void {
         if (this._distanceFilterCheckbox) {
-            this._distanceFilterCheckbox.checked = enabled;
+            // Only update if the state is different to avoid unnecessary updates
+            if (this._distanceFilterCheckbox.checked !== enabled) {
+                this._distanceFilterCheckbox.checked = enabled;
+            }
         }
         // Update map instruction text based on filter state
         this.updateMapInstruction(enabled);

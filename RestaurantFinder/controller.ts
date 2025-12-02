@@ -7,6 +7,7 @@ import { Restaurant } from "./model";
 export class RestaurantFinderController {
     private _model: RestaurantFinderModel;
     private _view: RestaurantFinderView;
+    private _isUpdatingDistanceFilter: boolean = false; // Guard to prevent update loops
 
     constructor(model: RestaurantFinderModel, view: RestaurantFinderView) {
         this._model = model;
@@ -517,11 +518,20 @@ export class RestaurantFinderController {
     public handleDistanceFilterToggle(enabled: boolean): void {
         console.log("handleDistanceFilterToggle called, enabled:", enabled);
         
-        // Edge case: If enabling but no points are set, allow it but filter won't apply until points are set
-        // The filter logic already handles this by checking if both points exist
-        // When disabling, hide the selection points on the map
+        // Guard against update loops
+        if (this._isUpdatingDistanceFilter) {
+            console.log("Already updating distance filter, skipping");
+            return;
+        }
         
-        this._model.setDistanceFilterEnabled(enabled);
+        this._isUpdatingDistanceFilter = true;
+        
+        try {
+            // Edge case: If enabling but no points are set, allow it but filter won't apply until points are set
+            // The filter logic already handles this by checking if both points exist
+            // When disabling, hide the selection points on the map
+            
+            this._model.setDistanceFilterEnabled(enabled);
         
         // Update view display
         const filterState = this._model.filterState;
@@ -549,8 +559,13 @@ export class RestaurantFinderController {
             filterState.point2
         );
         
-        // Update map with filtered results (this will trigger a redraw)
-        this.updateView();
+            // Update map with filtered results
+            // Note: applyFilters() is called by setDistanceFilterEnabled, but we still need updateView()
+            // to update the map widget and UI
+            this.updateView();
+        } finally {
+            this._isUpdatingDistanceFilter = false;
+        }
     }
 
     // Handle max distance change

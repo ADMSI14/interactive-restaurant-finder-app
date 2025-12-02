@@ -140,22 +140,19 @@ export class MapWidgetView {
     gc.rect(0, 0, this._map.width || 0, this._map.height || 0);
     gc.clip();
     
-    // Convert hex color to rgba for transparency
-    const hexToRgba = (hex: string, alpha: number) => {
-      const r = parseInt(hex.slice(1, 3), 16);
-      const g = parseInt(hex.slice(3, 5), 16);
-      const b = parseInt(hex.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    };
+    // Convert hex color to rgba for transparency (cache the RGB values)
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
     
     // Draw semi-transparent filled circle
     gc.beginPath();
     gc.arc(center.x, center.y, radiusPixels, 0, 2 * Math.PI);
-    gc.fillStyle = hexToRgba(color, 0.15); // Light fill
+    gc.fillStyle = `rgba(${r}, ${g}, ${b}, 0.15)`; // Light fill
     gc.fill();
     
     // Draw border circle with more opacity
-    gc.strokeStyle = hexToRgba(color, 0.6); // More visible border
+    gc.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.6)`; // More visible border
     gc.lineWidth = 2.5;
     gc.stroke();
     gc.closePath();
@@ -164,7 +161,7 @@ export class MapWidgetView {
     gc.beginPath();
     gc.setLineDash([5, 5]);
     gc.arc(center.x, center.y, radiusPixels, 0, 2 * Math.PI);
-    gc.strokeStyle = hexToRgba(color, 0.3);
+    gc.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.3)`;
     gc.lineWidth = 1;
     gc.stroke();
     gc.setLineDash([]); // Reset line dash
