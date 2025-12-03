@@ -51,6 +51,28 @@ The application follows the MVC architectural pattern at multiple levels:
 - **Functionality**: Select multiple features (free parking, pets allowed, vegetarian options, gluten free options)
 - **Implementation**: Multiple checkboxes with AND logic - restaurants must have ALL selected features
 
+#### Distance Filter (Bonus Feature)
+- **Widget**: MapWidget with custom point selection, Slider for max distance, CheckBox for enable/disable
+- **Functionality**: Filter restaurants within a specified distance from two selected points on the map
+- **Implementation**: 
+  - Users can click on the map to select two points (Point 1 and Point 2)
+  - A slider allows users to set the maximum distance in kilometers (1-20 km range)
+  - Distance calculations use the Haversine formula to compute real geodesic distances based on latitude/longitude coordinates
+  - Visual feedback includes:
+    - Numbered circles (blue for Point 1, green for Point 2) marking selected locations
+    - Semi-transparent circles showing the distance radius around each point
+    - Real-time filtering as points and distance are adjusted
+  - Uses OR logic: restaurants within the maximum distance of either point are included
+  - Filter can be enabled/disabled via checkbox, and selection points are hidden when disabled
+  - Performance optimized by applying distance filter last (after other filters) to minimize expensive calculations
+
+**Distance Calculation Details**:
+- **Algorithm**: Haversine formula for calculating great-circle distances between two points on Earth
+- **Formula**: `distance = 2 * R * atan2(√a, √(1-a))` where `a = sin²(Δlat/2) + cos(lat1) * cos(lat2) * sin²(Δlon/2)`
+- **Earth's Radius**: 6,371 km (standard value for distance calculations)
+- **Accuracy**: Provides accurate distance measurements for geographic coordinates
+- **Implementation**: Static method `calculateDistance()` in `RestaurantFinderModel` class
+
 ### 3. Restaurant Details Panel
 - Displays comprehensive information when a restaurant is clicked
 - Shows: name, type, cost, rating, parking availability, pets allowed status
@@ -158,6 +180,10 @@ interface FilterState {
     maxRating: number;
     selectedType: string | null;
     selectedFeatures: string[];
+    point1: { latitude: number; longitude: number } | null;
+    point2: { latitude: number; longitude: number } | null;
+    maxDistance: number; // in kilometers
+    distanceFilterEnabled: boolean;
 }
 ```
 
@@ -166,8 +192,14 @@ interface FilterState {
 ### Filter Logic
 - All filters use AND logic - restaurants must match ALL active filters
 - Features filter uses AND logic within itself - restaurant must have ALL selected features
+- Distance filter uses OR logic - restaurants within maxDistance of either point1 or point2 are included
 - Filter ranges are inclusive on both ends
-- Filters are applied sequentially for efficiency
+- Filters are applied sequentially for efficiency:
+  - Type filter (fastest - string comparison)
+  - Features filter (fast - array operations)
+  - Cost range filter (fast - number comparison)
+  - Rating range filter (fast - number comparison)
+  - Distance filter (most expensive - Haversine calculation, applied last on already-filtered list)
 
 ### Event Handling
 - Map widget events: `point-hover` and `point-click`
@@ -208,19 +240,22 @@ main.ts               # Application entry point
 - Filter interactions update model and view
 - Map displays restaurants correctly
 - Restaurant details display on click
-- Filters apply correctly with AND logic
+- Filters apply correctly with AND logic (distance filter uses OR logic for point selection)
 - Result count updates dynamically
 - Selected restaurant clears when filtered out
 - Slider bounds initialize from actual data ranges
+- Distance filter calculates accurate distances using Haversine formula
+- Visual indicators (circles and numbered points) display correctly on map
+- Distance filter performance optimized through filter reordering
 
 ## Future Enhancements
 
 Potential improvements for future versions:
-1. Distance filter (bonus feature) - filter restaurants by distance from a point
-2. Search functionality - search restaurants by name
-3. Sorting options - sort results by rating, cost, or distance
-4. Save/load filter presets
-5. Export filtered results
+1. Search functionality - search restaurants by name
+2. Sorting options - sort results by rating, cost, or distance
+3. Save/load filter presets
+4. Export filtered results
+5. Additional distance filter options (e.g., single point selection, different distance metrics)
 
 ## Conclusion
 
