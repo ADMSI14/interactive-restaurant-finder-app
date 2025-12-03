@@ -12,13 +12,15 @@ Used to disclose AI use. Please see the course [syllabus](https://cs-3035-2025.g
 - Restructuring
 - and Enhancing the language to fit technical reports 
 
-**Review Process**: After using the AI assistant, the author reviewed all generated documentation, made necessary modifications, and verified it. 
+AND
+
+- It was used for debugging purposes.
+
+**Review Process**: After using the AI assistant, the author reviewed all documentation, made necessary modifications, and verified it. 
 
 **Course Compliance**: The author believe this use of AI fits within course regulations because:
 - AI was used to better the quality of the documentation
 - It was not used to generate or implement code. 
+- It was solely use to understand errors and debug.
 - The use was transparent and disclosed in this document
 
-### Note
-
-If no AI was used please provide a simple statement that "No AI was used in the creation of this work in way"
