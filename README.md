@@ -33,11 +33,11 @@ Interactive web application that allows users to discover restaurants using an i
 ---
 
 ## My Contributions
-- Designed and implemented the overall application architecture (MVC structure)  
-- Developed reusable UI components and custom widgets  
-- Implemented interactive map functionality and user interactions  
-- Built filtering system for dynamic restaurant discovery  
-- Integrated event-driven communication between components  
+- Designed and implemented the full application architecture using MVC principles
+- Developed reusable UI components and modular front-end structure
+- Built interactive map system with event-driven user interaction model
+- Implemented filtering logic and geospatial distance-based computations
+- Ensured separation of concerns across model, view, and controller layers
 
 ---
 
