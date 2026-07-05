@@ -6,11 +6,11 @@ Interactive web application that allows users to discover restaurants using an i
 ---
 
 ## Features
-- Interactive map visualization with restaurant markers  
-- Real-time filtering of restaurant data  
-- Distance-based calculations for location discovery  
-- Custom UI widgets for user interaction  
-- Responsive and modular interface design  
+- Interactive map-based restaurant discovery interface
+- Event-driven filtering engine for dynamic result updates
+- Geospatial distance calculation for location-based search
+- Reusable UI component system for scalable interface design
+- Responsive and modular front-end application design 
 
 ---
 
