@@ -6,7 +6,7 @@ Interactive web application that allows users to discover restaurants using an i
 ---
 
 ## Features
-- Interactive map-based restaurant discovery interface
+- Event-driven interactive map visualization-based restaurant discovery interface
 - Event-driven filtering engine for dynamic result updates
 - Geospatial distance calculation for location-based search
 - Reusable UI component system for scalable interface design
@@ -14,7 +14,17 @@ Interactive web application that allows users to discover restaurants using an i
 
 ---
 
+## System Design Highlights
+- Client-side MVC architecture
+- Event-driven communication between components
+- Modular and reusable UI components
+- Geospatial computation for location-based filtering
+- Separation of UI, logic, and data layers
+
+---
+
 ## Architecture
+- The system follows a layered client-side architecture emphasizing scalability, maintainability, and separation between data handling, UI rendering, and user interaction logic.
 - Model–View–Controller (MVC) architecture with clear separation of concerns
 - Event-driven client-side application architecture for dynamic UI updates
 - Modular component-based design enabling reusable UI widgets
