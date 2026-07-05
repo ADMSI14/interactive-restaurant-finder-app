@@ -15,10 +15,11 @@ Interactive web application that allows users to discover restaurants using an i
 ---
 
 ## Architecture
-- Model–View–Controller (MVC) architecture  
-- Event-driven UI design  
-- Modular and reusable component structure  
-- Separation of concerns between data, logic, and presentation layers  
+- Model–View–Controller (MVC) architecture with clear separation of concerns
+- Event-driven client-side application architecture for dynamic UI updates
+- Modular component-based design enabling reusable UI widgets
+- Structured data flow between model, controller, and view layers
+- Geospatial computation layer supporting distance-based filtering logic 
 
 ---
 
