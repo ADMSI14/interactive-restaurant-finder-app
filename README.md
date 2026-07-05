@@ -24,7 +24,7 @@ Interactive web application that allows users to discover restaurants using an i
 ---
 
 ## Architecture
-- The system follows a layered client-side architecture emphasizing scalability, maintainability, and separation between data handling, UI rendering, and user interaction logic.
+- The application is designed as a client-side modular system where UI components, application logic, and data processing are decoupled to ensure maintainability and scalability.
 - Model–View–Controller (MVC) architecture with clear separation of concerns
 - Event-driven client-side application architecture for dynamic UI updates
 - Modular component-based design enabling reusable UI widgets
