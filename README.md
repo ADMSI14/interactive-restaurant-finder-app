@@ -58,4 +58,32 @@ Interactive web application that allows users to discover restaurants using an i
 - Component-based UI design  
 - Event-driven programming  
 - Geospatial interaction logic  
-- Modular software design principles  
+- Modular software design principles
+
+---
+
+## Screenshots
+
+Main screen
+<img width="1920" height="872" alt="Screenshot (329)" src="https://github.com/user-attachments/assets/817807b9-e5dc-455f-a908-7ce394b7f11a" />
+
+Click on marker for details
+<img width="1920" height="888" alt="Screenshot (330)" src="https://github.com/user-attachments/assets/5afbccdd-bbf1-42cd-be68-85a38f097315" />
+
+Cost range altered
+<img width="1920" height="881" alt="Screenshot (331)" src="https://github.com/user-attachments/assets/93303892-eadf-48ac-9cdd-3a93ed5ea65c" />
+
+Rating range altered
+<img width="1920" height="878" alt="Screenshot (332)" src="https://github.com/user-attachments/assets/3426c63b-5ccb-472e-9347-b9591740c951" />
+
+Distance filter enabled
+<img width="1920" height="891" alt="Screenshot (333)" src="https://github.com/user-attachments/assets/3fd09136-b8f3-49ec-9c27-af1c10e0f09a" />
+
+Distance filter enabled, restaurant type: Canadian, Features: vegetarian options
+<img width="1920" height="910" alt="Screenshot (334)" src="https://github.com/user-attachments/assets/662f65d1-e6f1-4717-911d-b780602225da" />
+
+
+
+
+
+
