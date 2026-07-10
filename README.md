@@ -62,6 +62,16 @@ Interactive web application that allows users to discover restaurants using an i
 
 ---
 
+## To run
+on a CLI
+- cd interactive-restaurant-finder-app
+- cd RestaurantFinder
+- npm install
+- npm run dev
+copy and paste local host URL
+
+---
+
 ## Screenshots
 
 Main screen
